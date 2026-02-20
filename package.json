@@ -1,0 +1,60 @@
+{
+  "name": "webpbatch-pro",
+  "version": "1.0.0",
+  "description": "Compress & Convert immagini in batch (WebP/JPG/PNG) in 1 click",
+  "main": "main.js",
+  "scripts": {
+    "start": "node launch.js",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "generate-key": "node tools/generate-key.js"
+  },
+  "author": "WebPBatch Pro",
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "electron": "^40.4.1",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "sharp": "^0.34.5"
+  },
+  "build": {
+    "appId": "com.webpbatchpro.app",
+    "productName": "WebPBatch Pro",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "lib/**/*",
+      "presets/**/*",
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "build/icon.icns"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  }
+}

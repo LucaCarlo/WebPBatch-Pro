@@ -1,0 +1,13 @@
+{
+  "id": "ecommerce",
+  "name": "Ecommerce",
+  "description": "Per prodotti e-commerce",
+  "format": "webp",
+  "quality": 82,
+  "lossless": false,
+  "resizeMode": "long-edge",
+  "longEdge": 2048,
+  "sharpen": true,
+  "stripMetadata": true,
+  "namingTemplate": "{name}"
+}

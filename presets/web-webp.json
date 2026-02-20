@@ -1,0 +1,13 @@
+{
+  "id": "web-webp",
+  "name": "Web (WebP)",
+  "description": "Ottimale per siti web generici",
+  "format": "webp",
+  "quality": 80,
+  "lossless": false,
+  "resizeMode": "long-edge",
+  "longEdge": 1920,
+  "sharpen": false,
+  "stripMetadata": true,
+  "namingTemplate": "{name}"
+}

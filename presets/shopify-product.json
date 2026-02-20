@@ -1,0 +1,13 @@
+{
+  "id": "shopify-product",
+  "name": "Shopify Prodotto",
+  "description": "Per prodotti Shopify",
+  "format": "webp",
+  "quality": 82,
+  "lossless": false,
+  "resizeMode": "long-edge",
+  "longEdge": 2048,
+  "sharpen": true,
+  "stripMetadata": true,
+  "namingTemplate": "{name}"
+}

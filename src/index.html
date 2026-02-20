@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file:; font-src 'self'; connect-src https://api.anthropic.com https://api.openai.com https://generativelanguage.googleapis.com">
+  <title>WebPBatch Pro</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+</head>
+<body>
+  <!-- ══════════ TOP BAR ══════════ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <img class="topbar-logo" src="assets/logo.png" alt="WebPBatch Pro" width="28" height="28">
+      <span class="topbar-title">WebPBatch Pro</span>
+      <span class="topbar-version" id="appVersion"></span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost btn-sm" id="btnThemeToggle" title="Tema chiaro/scuro">
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.5 8.5a5.5 5.5 0 0 1-7-7A5.5 5.5 0 1 0 13.5 8.5z"/></svg>
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none"><circle cx="8" cy="8" r="3"/><path d="M8 1v2m0 10v2M1 8h2m10 0h2M3.17 3.17l1.42 1.42m6.82 6.82 1.42 1.42M12.83 3.17l-1.42 1.42M4.59 11.41l-1.42 1.42"/></svg>
+      </button>
+      <button class="btn btn-ghost btn-sm" id="btnWatchFolder" title="Watch Folder">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>
+        <span>Watch</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" id="btnSettings" title="Mostra/nascondi impostazioni">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2m0 10v2M1 8h2m10 0h2M2.93 2.93l1.41 1.41m7.32 7.32 1.41 1.41M13.07 2.93l-1.41 1.41M4.34 11.66l-1.41 1.41"/></svg>
+      </button>
+      <button class="btn btn-ghost btn-sm" id="btnAbout" title="Informazioni">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 7v5M8 4.5v.5"/></svg>
+        <span>Info</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ══════════ MAIN CONTENT ══════════ -->
+  <main class="main-layout" id="mainLayout">
+    <!-- LEFT: Drop + File List -->
+    <section class="main-content">
+      <!-- Drop Zone -->
+      <div class="dropzone" id="dropZone">
+        <div class="dropzone-inner">
+          <svg class="dropzone-icon" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="var(--accent)" stroke-width="2">
+            <rect x="8" y="16" width="48" height="40" rx="4" stroke-dasharray="4 3"/>
+            <path d="M32 28v16m-6-6 6 6 6-6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 16V12a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v4"/>
+          </svg>
+          <p class="dropzone-text">Trascina file o cartelle qui</p>
+          <p class="dropzone-sub">JPG, PNG, WebP, AVIF, GIF, TIFF, BMP</p>
+          <div class="dropzone-buttons">
+            <button class="btn btn-outline btn-sm" id="btnBrowseFiles">Sfoglia file</button>
+            <button class="btn btn-ghost btn-sm" id="btnBrowseFolders">Sfoglia cartelle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- File List -->
+      <div class="filelist-container" id="fileListContainer" style="display:none;">
+        <div class="filelist-header">
+          <div class="filelist-count">
+            <span id="fileCount">0</span> immagini trovate
+            <span class="filelist-size">(<span id="totalInputSize">0</span>)</span>
+          </div>
+          <div class="filelist-actions">
+            <input type="text" class="input input-sm filelist-filter" id="fileFilter" placeholder="Filtra..." title="Filtra per nome">
+            <label class="checkbox-label" title="Includi sottocartelle">
+              <input type="checkbox" id="chkSubfolders" checked>
+              <span>Sottocartelle</span>
+            </label>
+            <button class="btn btn-ghost btn-xs" id="btnClearList" title="Svuota lista">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1m2 0v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4"/></svg>
+              Svuota
+            </button>
+          </div>
+        </div>
+        <div class="filelist-table-wrap" id="fileListWrap">
+          <table class="filelist-table">
+            <thead>
+              <tr>
+                <th class="col-thumb"></th>
+                <th class="col-name col-sortable" data-sort="name">Nome <span class="sort-arrow"></span></th>
+                <th class="col-type">Tipo</th>
+                <th class="col-dims">Dimensioni</th>
+                <th class="col-size col-sortable" data-sort="size">Peso <span class="sort-arrow"></span></th>
+                <th class="col-status">Stato</th>
+                <th class="col-result">Risultato</th>
+                <th class="col-actions"></th>
+              </tr>
+            </thead>
+            <tbody id="fileListBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Settings Panel -->
+    <aside class="settings-panel" id="settingsPanel">
+      <h3 class="settings-title">Impostazioni</h3>
+
+      <!-- AI Assistant -->
+      <div class="setting-group ai-section">
+        <label class="setting-label">
+          Assistente AI
+        </label>
+        <div class="ai-config">
+          <select id="aiProvider" class="select select-sm">
+            <option value="anthropic">Anthropic Claude</option>
+            <option value="openai">OpenAI GPT</option>
+            <option value="google">Google Gemini</option>
+          </select>
+          <div class="ai-key-row">
+            <input type="password" id="aiApiKey" class="input input-sm" placeholder="API Key...">
+            <button class="btn btn-ghost btn-xs" id="btnSaveAiConfig" title="Salva configurazione">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2h9l3 3v9H2z"/><path d="M5 2v4h5V2"/><path d="M5 10h6v4H5z"/></svg>
+            </button>
+          </div>
+          <span id="aiStatus" class="ai-status-text"></span>
+        </div>
+        <textarea id="aiDescription" class="input ai-textarea" rows="2" placeholder="Es: 'Devo mettere queste foto come prodotti su Shopify' o 'Post Instagram promozionale'"></textarea>
+        <button class="btn btn-accent btn-sm ai-suggest-btn" id="btnAiSuggest">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v2m0 10v2M1 8h2m10 0h2"/><circle cx="8" cy="8" r="3"/></svg>
+          Suggerisci Impostazioni
+        </button>
+        <div id="aiSuggestResult" style="display:none;"></div>
+      </div>
+
+      <!-- Preset -->
+      <div class="setting-group">
+        <label class="setting-label">Preset</label>
+        <div class="preset-selector">
+          <select id="presetSelect" class="select">
+            <option value="web-webp">Web (WebP)</option>
+            <option value="ecommerce">Ecommerce</option>
+            <option value="instagram">Instagram</option>
+            <option value="custom">Personalizzato</option>
+          </select>
+          <div class="preset-actions" id="presetActions" style="display:none;">
+            <button class="btn btn-ghost btn-xs" id="btnSavePreset" title="Salva preset">Salva</button>
+            <button class="btn btn-ghost btn-xs" id="btnDeletePreset" title="Elimina preset">Elimina</button>
+            <button class="btn btn-ghost btn-xs" id="btnExportPreset" title="Esporta preset">Esporta</button>
+            <button class="btn btn-ghost btn-xs" id="btnImportPreset" title="Importa preset">Importa</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Format -->
+      <div class="setting-group">
+        <label class="setting-label">Formato output</label>
+        <div class="radio-group">
+          <label class="radio-label"><input type="radio" name="format" value="webp" checked> WebP</label>
+          <label class="radio-label"><input type="radio" name="format" value="avif"> AVIF</label>
+          <label class="radio-label"><input type="radio" name="format" value="jpg"> JPG</label>
+          <label class="radio-label"><input type="radio" name="format" value="png"> PNG</label>
+        </div>
+        <label class="checkbox-label" title="WebP/PNG Lossless">
+          <input type="checkbox" id="chkLossless">
+          <span>Lossless</span>
+        </label>
+      </div>
+
+      <!-- Quality -->
+      <div class="setting-group" id="qualityGroup">
+        <label class="setting-label">
+          Qualita
+          <span class="quality-value" id="qualityValue">80</span>
+        </label>
+        <input type="range" id="qualitySlider" class="slider" min="1" max="100" value="80">
+        <div class="slider-hints">
+          <span>Piu piccolo</span>
+          <span>Piu qualita</span>
+        </div>
+      </div>
+
+      <!-- Resize -->
+      <div class="setting-group">
+        <label class="setting-label">Ridimensiona</label>
+        <select id="resizeMode" class="select">
+          <option value="none">Nessuno</option>
+          <option value="long-edge">Lato lungo</option>
+          <option value="custom">Personalizzato</option>
+          <option value="crop">Ritaglia (Crop)</option>
+        </select>
+        <div id="resizeLongEdge" class="resize-sub" style="display:none;">
+          <select id="longEdgeValue" class="select select-sm">
+            <option value="600">600px</option>
+            <option value="1080">1080px</option>
+            <option value="1200">1200px</option>
+            <option value="1920" selected>1920px</option>
+            <option value="2048">2048px</option>
+            <option value="2400">2400px</option>
+            <option value="custom">Custom...</option>
+          </select>
+          <input type="number" id="longEdgeCustom" class="input input-sm" placeholder="px" style="display:none;" min="1">
+        </div>
+        <div id="resizeCustom" class="resize-sub" style="display:none;">
+          <div class="resize-inputs">
+            <input type="number" id="resizeWidth" class="input input-sm" placeholder="Larghezza" min="1">
+            <span class="resize-x">x</span>
+            <input type="number" id="resizeHeight" class="input input-sm" placeholder="Altezza" min="1">
+          </div>
+          <label class="checkbox-label">
+            <input type="checkbox" id="chkMaintainAspect" checked>
+            <span>Mantieni proporzioni</span>
+          </label>
+        </div>
+        <div id="resizeCrop" class="resize-sub" style="display:none;">
+          <div class="resize-inputs">
+            <input type="number" id="cropWidth" class="input input-sm" placeholder="Larghezza" min="1">
+            <span class="resize-x">x</span>
+            <input type="number" id="cropHeight" class="input input-sm" placeholder="Altezza" min="1">
+          </div>
+          <p class="setting-hint-text">L'immagine verra ritagliata dal centro</p>
+        </div>
+      </div>
+
+      <!-- Output folder -->
+      <div class="setting-group">
+        <label class="setting-label">Cartella output</label>
+        <div class="folder-picker">
+          <input type="text" id="outputFolder" class="input" placeholder="optimized/ (default)" readonly>
+          <button class="btn btn-ghost btn-xs" id="btnSelectOutput" title="Scegli cartella">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h4l2 2h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-xs" id="btnResetOutput" title="Reset default">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1l14 14M1 15L15 1"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Naming -->
+      <div class="setting-group">
+        <label class="setting-label">
+          Naming template
+          <span class="setting-hint" title="Variabili: {name} = nome originale, {w} = larghezza, {h} = altezza, {date} = data, {counter} = contatore">?</span>
+        </label>
+        <input type="text" id="namingTemplate" class="input" value="{name}" placeholder="{name}">
+        <div class="naming-vars">
+          <button class="btn btn-ghost btn-xs" data-var="{name}">{name}</button>
+          <button class="btn btn-ghost btn-xs" data-var="{w}">{w}</button>
+          <button class="btn btn-ghost btn-xs" data-var="{h}">{h}</button>
+          <button class="btn btn-ghost btn-xs" data-var="{date}">{date}</button>
+          <button class="btn btn-ghost btn-xs" data-var="{counter}">{counter}</button>
+        </div>
+      </div>
+
+      <!-- Duplicates -->
+      <div class="setting-group">
+        <label class="setting-label">Se file esiste</label>
+        <select id="duplicateMode" class="select">
+          <option value="rename">Rinomina (-001, -002...)</option>
+          <option value="skip">Salta</option>
+          <option value="overwrite">Sovrascrivi</option>
+        </select>
+      </div>
+
+      <!-- Advanced: EXIF -->
+      <div class="setting-group">
+        <label class="setting-label">Metadata / EXIF</label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="chkStripMetadata" checked>
+          <span>Rimuovi metadata</span>
+        </label>
+        <label class="checkbox-label" title="Rimuovi GPS ma mantieni orientamento">
+          <input type="checkbox" id="chkPrivacyMode">
+          <span>Privacy mode (rimuovi GPS)</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="chkKeepIcc">
+          <span>Mantieni profilo colore ICC</span>
+        </label>
+      </div>
+
+      <!-- Advanced: Sharpen -->
+      <div class="setting-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="chkSharpen">
+          <span>Sharpen dopo resize</span>
+        </label>
+      </div>
+
+      <!-- Smart Mode -->
+      <div class="setting-group">
+        <label class="setting-label">Smart Mode</label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="chkSmartMode">
+          <span>Abilita ottimizzazione smart</span>
+        </label>
+        <div id="smartOptions" style="display:none;">
+          <div class="smart-option">
+            <label>Soglia minima risparmio (%)</label>
+            <input type="number" id="smartMinSaving" class="input input-sm" value="5" min="0" max="100">
+          </div>
+          <div class="smart-option">
+            <label>Target peso massimo (KB)</label>
+            <input type="number" id="smartTargetSize" class="input input-sm" placeholder="es. 200" min="0">
+          </div>
+        </div>
+      </div>
+
+      <!-- Threads -->
+      <div class="setting-group">
+        <label class="setting-label">Thread paralleli</label>
+        <select id="threadCount" class="select">
+          <option value="auto">Auto</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="4">4</option>
+          <option value="8">8</option>
+        </select>
+      </div>
+
+      <!-- Watermark -->
+      <div class="setting-group">
+        <label class="setting-label">Watermark</label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="chkWatermark">
+          <span>Abilita watermark</span>
+        </label>
+        <div id="watermarkOptions" style="display:none;">
+          <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="watermarkType" value="text" checked> Testo</label>
+            <label class="radio-label"><input type="radio" name="watermarkType" value="image"> Immagine</label>
+          </div>
+          <div id="watermarkTextOpts">
+            <input type="text" id="watermarkText" class="input" placeholder="Testo watermark">
+            <div class="watermark-row">
+              <label>Font size</label>
+              <input type="number" id="watermarkFontSize" class="input input-sm" value="24" min="8">
+            </div>
+            <div class="watermark-row">
+              <label>Colore</label>
+              <input type="color" id="watermarkColor" value="#ffffff">
+            </div>
+            <div class="watermark-row">
+              <label>Stroke</label>
+              <input type="color" id="watermarkStroke" value="#000000">
+            </div>
+          </div>
+          <div id="watermarkImageOpts" style="display:none;">
+            <div class="folder-picker">
+              <input type="text" id="watermarkImagePath" class="input" placeholder="Scegli immagine PNG..." readonly>
+              <button class="btn btn-ghost btn-xs" id="btnSelectWatermarkImage">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h4l2 2h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="watermark-row">
+            <label>Opacita</label>
+            <input type="range" id="watermarkOpacity" class="slider slider-sm" min="0" max="100" value="50">
+            <span id="watermarkOpacityValue">50%</span>
+          </div>
+          <div class="watermark-row">
+            <label>Posizione</label>
+            <select id="watermarkPosition" class="select select-sm">
+              <option value="top-left">Alto sx</option>
+              <option value="top-center">Alto centro</option>
+              <option value="top-right">Alto dx</option>
+              <option value="center">Centro</option>
+              <option value="bottom-left">Basso sx</option>
+              <option value="bottom-center">Basso centro</option>
+              <option value="bottom-right" selected>Basso dx</option>
+            </select>
+          </div>
+          <div class="watermark-row">
+            <label>Margine (px)</label>
+            <input type="number" id="watermarkMargin" class="input input-sm" value="20" min="0">
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="footer">
+    <div class="footer-progress">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <span class="progress-text" id="progressText">Pronto</span>
+    </div>
+    <div class="footer-actions">
+      <button class="btn btn-ghost btn-sm" id="btnCopyLog" title="Copia log negli appunti">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M5 11H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v2"/></svg>
+        Log
+      </button>
+      <button class="btn btn-ghost btn-sm" id="btnShortcuts" title="Scorciatoie tastiera">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="2"/><path d="M4 7h1m2 0h2m2 0h1M3 10h10"/></svg>
+      </button>
+      <button class="btn btn-ghost" id="btnClearAll">Svuota lista</button>
+      <div class="footer-convert-group">
+        <button class="btn btn-ghost" id="btnPause" style="display:none;">Pausa</button>
+        <button class="btn btn-ghost" id="btnResume" style="display:none;">Riprendi</button>
+        <button class="btn btn-danger" id="btnCancel" style="display:none;">Annulla</button>
+        <button class="btn btn-accent btn-lg" id="btnConvert" disabled>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3l8 5-8 5z"/></svg>
+          Converti
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════ MODALS ══════════ -->
+
+  <!-- About Modal -->
+  <div class="modal-overlay" id="aboutModal" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>WebPBatch Pro</h3>
+        <button class="modal-close" id="closeAboutModal">&times;</button>
+      </div>
+      <div class="modal-body about-body">
+        <div class="about-logo-section">
+          <img src="assets/logo.png" alt="WebPBatch Pro" width="64" height="64" class="about-logo">
+          <div>
+            <h3 class="about-app-name">WebPBatch Pro</h3>
+            <p class="about-version" id="aboutVersion">v1.0.0</p>
+          </div>
+        </div>
+        <p class="about-description">Convertitore batch di immagini professionale con supporto WebP, AVIF, JPG e PNG. Preview confronto, AI Assistant, watermark, preset social e molto altro.</p>
+        <div class="about-features">
+          <div class="about-feature-item">Conversione batch multi-formato (WebP, AVIF, JPG, PNG)</div>
+          <div class="about-feature-item">Preview confronto side-by-side con slider</div>
+          <div class="about-feature-item">Assistente AI (Alt Text, Metadata SEO, Suggerimenti)</div>
+          <div class="about-feature-item">Watermark testo e immagine</div>
+          <div class="about-feature-item">Smart Mode con ottimizzazione automatica</div>
+          <div class="about-feature-item">Watch Folder per monitoraggio automatico</div>
+          <div class="about-feature-item">Preset per social media e e-commerce</div>
+          <div class="about-feature-item">Tema chiaro/scuro</div>
+        </div>
+        <div class="about-links">
+          <a href="#" id="aboutGithubLink" class="about-link">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            Documentazione e Codice Sorgente
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Modal -->
+  <div class="modal-overlay" id="reportModal" style="display:none;">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>Report Conversione</h3>
+        <button class="modal-close" id="closeReportModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="report-summary" id="reportSummary"></div>
+        <div class="report-details" id="reportDetails"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btnExportCsv">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v10m-4-4 4 4 4-4M2 13h12"/></svg>
+          Esporta CSV
+        </button>
+        <button class="btn btn-accent" id="btnOpenOutput">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h4l2 2h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+          Apri cartella output
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Modal (Side-by-Side) -->
+  <div class="modal-overlay" id="previewModal" style="display:none;">
+    <div class="modal modal-xl">
+      <div class="modal-header">
+        <h3>Preview Confronto</h3>
+        <button class="modal-close" id="closePreviewModal">&times;</button>
+      </div>
+      <div class="modal-body preview-body">
+        <div id="previewLoading" class="preview-loading">
+          <div class="spinner"></div>
+          <p>Generando preview...</p>
+        </div>
+        <div id="previewCompare" class="preview-compare" style="display:none;">
+          <div class="preview-images">
+            <img id="previewOriginal" class="preview-img preview-img-left" alt="Originale">
+            <img id="previewConverted" class="preview-img preview-img-right" alt="Convertita">
+            <div id="previewSlider" class="preview-slider">
+              <div class="preview-slider-line"></div>
+              <div class="preview-slider-handle">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4 8l3-4v8zm8 0l-3-4v8z"/></svg>
+              </div>
+            </div>
+            <div class="preview-label preview-label-left">Originale</div>
+            <div class="preview-label preview-label-right">Convertita</div>
+          </div>
+          <div class="preview-info">
+            <div id="previewInfoOriginal" class="preview-info-box"></div>
+            <div id="previewInfoSavings" class="preview-info-savings"></div>
+            <div id="previewInfoConverted" class="preview-info-box"></div>
+          </div>
+        </div>
+        <!-- AI-powered sections -->
+        <div class="preview-ai-section">
+          <div class="preview-ai-group">
+            <label class="setting-label">Alt Text (AI)</label>
+            <div class="preview-ai-row">
+              <textarea id="previewAltText" class="input" rows="2" placeholder="Clicca 'Genera' per creare alt text SEO..." readonly></textarea>
+              <div class="preview-ai-buttons">
+                <button class="btn btn-accent btn-xs" id="btnGenerateAltText">Genera Alt Text</button>
+                <button class="btn btn-ghost btn-xs" id="btnCopyAltText" title="Copia">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M5 11H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="preview-ai-group">
+            <label class="setting-label">Metadata SEO (AI)</label>
+            <div class="preview-ai-row">
+              <textarea id="previewMetadata" class="input" rows="4" placeholder="Clicca 'Genera' per creare metadata SEO (title, description, keywords)..." readonly></textarea>
+              <div class="preview-ai-buttons">
+                <button class="btn btn-accent btn-xs" id="btnGenerateMetadata">Genera Metadata SEO</button>
+                <button class="btn btn-ghost btn-xs" id="btnCopyMetadata" title="Copia">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M5 11H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Watch Folder Modal -->
+  <div class="modal-overlay" id="watchModal" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Watch Folder</h3>
+        <button class="modal-close" id="closeWatchModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Seleziona una cartella da monitorare. Le nuove immagini saranno ottimizzate automaticamente.</p>
+        <div class="folder-picker">
+          <input type="text" id="watchFolderPath" class="input" placeholder="Scegli cartella..." readonly>
+          <button class="btn btn-ghost btn-xs" id="btnSelectWatchFolder">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h4l2 2h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+          </button>
+        </div>
+        <div id="watchStatus" class="watch-status" style="display:none;">
+          <span class="watch-dot"></span>
+          <span>Monitoraggio attivo</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btnStopWatch" style="display:none;">Ferma</button>
+        <button class="btn btn-accent" id="btnStartWatch">Avvia monitoraggio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shortcuts Modal -->
+  <div class="modal-overlay" id="shortcutsModal" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Scorciatoie Tastiera</h3>
+        <button class="modal-close" id="closeShortcutsModal">&times;</button>
+      </div>
+      <div class="modal-body shortcuts-body">
+        <div class="shortcut-row"><kbd>Ctrl+O</kbd> <span>Sfoglia file</span></div>
+        <div class="shortcut-row"><kbd>Ctrl+Enter</kbd> <span>Avvia conversione</span></div>
+        <div class="shortcut-row"><kbd>Ctrl+Shift+Del</kbd> <span>Svuota lista</span></div>
+        <div class="shortcut-row"><kbd>Esc</kbd> <span>Chiudi modale</span></div>
+        <div class="shortcut-row"><kbd>Ctrl+D</kbd> <span>Tema chiaro/scuro</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/presets.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/dragdrop.js"></script>
+  <script src="js/filelist.js"></script>
+  <script src="js/queue.js"></script>
+  <script src="js/report.js"></script>
+  <script src="js/watermark.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/ai-assistant.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

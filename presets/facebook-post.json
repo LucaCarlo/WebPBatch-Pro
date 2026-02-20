@@ -1,0 +1,13 @@
+{
+  "id": "facebook-post",
+  "name": "Facebook Post",
+  "description": "Ottimale per post Facebook",
+  "format": "jpg",
+  "quality": 85,
+  "lossless": false,
+  "resizeMode": "long-edge",
+  "longEdge": 1200,
+  "sharpen": false,
+  "stripMetadata": true,
+  "namingTemplate": "{name}"
+}

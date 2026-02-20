@@ -1,0 +1,13 @@
+{
+  "id": "twitter-post",
+  "name": "Twitter/X Post",
+  "description": "Ottimale per post Twitter/X",
+  "format": "jpg",
+  "quality": 85,
+  "lossless": false,
+  "resizeMode": "long-edge",
+  "longEdge": 1600,
+  "sharpen": false,
+  "stripMetadata": true,
+  "namingTemplate": "{name}"
+}

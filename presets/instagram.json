@@ -1,0 +1,13 @@
+{
+  "id": "instagram",
+  "name": "Instagram",
+  "description": "Ottimale per post Instagram",
+  "format": "jpg",
+  "quality": 85,
+  "lossless": false,
+  "resizeMode": "long-edge",
+  "longEdge": 1080,
+  "sharpen": false,
+  "stripMetadata": true,
+  "namingTemplate": "{name}"
+}

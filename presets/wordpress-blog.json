@@ -1,0 +1,13 @@
+{
+  "id": "wordpress-blog",
+  "name": "WordPress Blog",
+  "description": "Per immagini blog WordPress",
+  "format": "webp",
+  "quality": 80,
+  "lossless": false,
+  "resizeMode": "long-edge",
+  "longEdge": 1200,
+  "sharpen": false,
+  "stripMetadata": true,
+  "namingTemplate": "{name}"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "pinterest-pin",
+  "name": "Pinterest Pin",
+  "description": "Ottimale per pin Pinterest",
+  "format": "jpg",
+  "quality": 80,
+  "lossless": false,
+  "resizeMode": "custom",
+  "resizeWidth": 1000,
+  "maintainAspect": true,
+  "sharpen": false,
+  "stripMetadata": true,
+  "namingTemplate": "{name}"
+}
