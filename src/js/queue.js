@@ -94,12 +94,31 @@ const Queue = {
     AppState.isConverting = false;
     AppState.isPaused = false;
     AppState.lastReport = report;
-    this.updateUI();
+
+    // Show completed state
     this.progressFill.style.width = '100%';
-    this.progressText.textContent = 'Completato';
+    this.progressFill.classList.add('progress-complete');
+    this.progressText.textContent = 'Completato!';
+
+    // Update buttons
+    this.btnConvert.style.display = '';
+    this.btnConvert.disabled = AppState.files.length === 0;
+    this.btnPause.style.display = 'none';
+    this.btnResume.style.display = 'none';
+    this.btnCancel.style.display = 'none';
+    document.getElementById('btnClearList').disabled = false;
+    document.getElementById('btnClearAll').disabled = false;
 
     // Show report
     Report.showReport(report);
+
+    // Auto-reset progress bar after 4 seconds
+    clearTimeout(this._resetTimer);
+    this._resetTimer = setTimeout(() => {
+      this.progressFill.classList.remove('progress-complete');
+      this.progressFill.style.width = '0%';
+      this.progressText.textContent = 'Pronto';
+    }, 4000);
   },
 
   async pause() {
@@ -123,6 +142,13 @@ const Queue = {
     this.updateUI();
     this.progressText.textContent = 'Annullato';
     Utils.showToast('Conversione annullata', 'warning');
+
+    // Auto-reset after 3 seconds
+    clearTimeout(this._resetTimer);
+    this._resetTimer = setTimeout(() => {
+      this.progressFill.style.width = '0%';
+      this.progressText.textContent = 'Pronto';
+    }, 3000);
   },
 
   updateUI() {

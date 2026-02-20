@@ -385,6 +385,11 @@ input[type="color"] {
   vertical-align: middle;
 }
 
+.filelist-table td.col-actions {
+  overflow: visible;
+  white-space: normal;
+}
+
 .filelist-table tbody tr:hover {
   background: var(--bg-hover);
 }
