@@ -1,7 +1,12 @@
 {
   "name": "webpbatch-pro",
   "version": "1.0.0",
-  "description": "Compress & Convert immagini in batch (WebP/JPG/PNG) in 1 click",
+  "description": "Professional batch image converter (WebP, AVIF, JPG, PNG) with AI assistant",
+  "homepage": "https://github.com/LucaCarlo/WebPBatch-Pro",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LucaCarlo/WebPBatch-Pro.git"
+  },
   "main": "main.js",
   "scripts": {
     "start": "node launch.js",

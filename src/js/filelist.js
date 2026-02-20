@@ -144,12 +144,14 @@ const FileList = {
         <td class="col-status">${statusHtml}</td>
         <td class="col-result">${resultHtml}</td>
         <td class="col-actions">
-          <button class="btn-row-action" onclick="FileList.previewFile('${file.id}')" title="Preview">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>
-          </button>
-          <button class="btn-row-action" onclick="FileList.removeFile('${file.id}')" title="Rimuovi">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8"/></svg>
-          </button>
+          <div class="file-actions">
+            <button class="btn-row-action" onclick="FileList.previewFile('${file.id}')" title="Preview">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>
+            </button>
+            <button class="btn-row-action" onclick="FileList.removeFile('${file.id}')" title="Rimuovi">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+          </div>
         </td>
       </tr>
     `;

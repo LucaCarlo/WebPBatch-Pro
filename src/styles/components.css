@@ -396,7 +396,14 @@ input[type="color"] {
 .col-size { width: 70px; }
 .col-status { width: 80px; }
 .col-result { width: 110px; }
-.col-actions { width: 60px; }
+.col-actions { width: 64px; overflow: visible; }
+
+/* Actions cell layout */
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
 
 /* Sortable columns */
 .col-sortable {
