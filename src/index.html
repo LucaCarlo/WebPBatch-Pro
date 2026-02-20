@@ -21,6 +21,14 @@
         <svg class="icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.5 8.5a5.5 5.5 0 0 1-7-7A5.5 5.5 0 1 0 13.5 8.5z"/></svg>
         <svg class="icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none"><circle cx="8" cy="8" r="3"/><path d="M8 1v2m0 10v2M1 8h2m10 0h2M3.17 3.17l1.42 1.42m6.82 6.82 1.42 1.42M12.83 3.17l-1.42 1.42M4.59 11.41l-1.42 1.42"/></svg>
       </button>
+      <button class="btn btn-ghost btn-sm" id="btnMultiExport" title="Multi-Platform Export">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="6" height="5" rx="1"/><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="5" y="9" width="6" height="5" rx="1"/></svg>
+        <span>Multi Export</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" id="btnResponsive" title="Responsive Web Generator">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="1"/><path d="M5 1h6"/><rect x="4" y="6" width="4" height="5" rx=".5" stroke-dasharray="2 1"/></svg>
+        <span>Responsive</span>
+      </button>
       <button class="btn btn-ghost btn-sm" id="btnWatchFolder" title="Watch Folder">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>
         <span>Watch</span>
@@ -70,6 +78,10 @@
               <input type="checkbox" id="chkSubfolders" checked>
               <span>Sottocartelle</span>
             </label>
+            <button class="btn btn-ghost btn-xs" id="btnDuplicates" title="Cerca duplicati">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="8" height="8" rx="1"/><rect x="7" y="7" width="8" height="8" rx="1"/></svg>
+              Duplicati
+            </button>
             <button class="btn btn-ghost btn-xs" id="btnClearList" title="Svuota lista">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1m2 0v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4"/></svg>
               Svuota
@@ -368,6 +380,40 @@
             <label>Margine (px)</label>
             <input type="number" id="watermarkMargin" class="input input-sm" value="20" min="0">
           </div>
+          <!-- Advanced Watermark Options -->
+          <div class="watermark-advanced-divider" style="margin-top:12px;padding-top:8px;border-top:1px solid var(--border);">
+            <label class="setting-label" style="font-size:11px;margin-bottom:6px;">Opzioni Avanzate</label>
+          </div>
+          <div class="watermark-row">
+            <label>Dimensione</label>
+            <select id="watermarkSizeMode" class="select select-sm">
+              <option value="fixed">Fissa (px)</option>
+              <option value="adaptive">Adattiva (%)</option>
+            </select>
+          </div>
+          <div class="watermark-row" id="watermarkAdaptiveRow" style="display:none;">
+            <label>% larghezza</label>
+            <input type="number" id="watermarkAdaptivePercent" class="input input-sm" value="4" min="1" max="20">
+          </div>
+          <div class="watermark-row">
+            <label>Modalita</label>
+            <select id="watermarkPositionMode" class="select select-sm">
+              <option value="fixed">Posizione fissa</option>
+              <option value="random">Random (anti-scraping)</option>
+              <option value="pattern">Pattern (ripetuto)</option>
+              <option value="subtle">Subtle (invisibile)</option>
+            </select>
+          </div>
+          <div id="watermarkPatternOpts" style="display:none;">
+            <div class="watermark-row">
+              <label>Gap (px)</label>
+              <input type="number" id="watermarkPatternGap" class="input input-sm" value="100" min="20">
+            </div>
+            <div class="watermark-row">
+              <label>Rotazione</label>
+              <input type="number" id="watermarkPatternRotation" class="input input-sm" value="-30" min="-90" max="90">
+            </div>
+          </div>
         </div>
       </div>
     </aside>
@@ -495,6 +541,114 @@
             <div id="previewInfoConverted" class="preview-info-box"></div>
           </div>
         </div>
+        <!-- ── Tools Section ── -->
+        <div class="preview-tools-section">
+          <!-- Safe Area Overlay -->
+          <div class="preview-tool-group">
+            <label class="setting-label">Safe Area Overlay</label>
+            <div class="preview-tool-row">
+              <select id="safeAreaPlatform" class="select select-sm" style="flex:1;">
+                <option value="">Nessuno</option>
+                <option value="tiktok">TikTok</option>
+                <option value="instagram">Instagram</option>
+                <option value="youtube">YouTube</option>
+                <option value="facebook">Facebook</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Smart Crop -->
+          <div class="preview-tool-group">
+            <label class="setting-label">AI Smart Crop</label>
+            <div class="preview-tool-row">
+              <select id="smartCropPlatform" class="select select-sm" style="flex:1;">
+                <option value="instagram-post">Instagram Post (4:5)</option>
+                <option value="instagram-story">Instagram Story (9:16)</option>
+                <option value="tiktok">TikTok (9:16)</option>
+                <option value="youtube-thumb">YouTube Thumb (16:9)</option>
+                <option value="pinterest">Pinterest (2:3)</option>
+                <option value="facebook-post">Facebook (1:1)</option>
+              </select>
+              <button class="btn btn-accent btn-xs" id="btnSmartCrop">Crop AI</button>
+            </div>
+            <div id="smartCropResult" style="display:none;">
+              <div id="smartCropPreview" class="smart-crop-preview"></div>
+              <button class="btn btn-outline btn-xs" id="btnSmartCropSave" style="margin-top:6px;">Salva Crop</button>
+            </div>
+          </div>
+
+          <!-- YouTube Thumbnail Boost -->
+          <div class="preview-tool-group">
+            <label class="setting-label">YouTube Thumbnail Boost</label>
+            <div class="boost-sliders">
+              <div class="boost-slider-row">
+                <label>Luminosita</label>
+                <input type="range" id="boostBrightness" class="slider slider-sm" min="80" max="140" value="110">
+                <span id="boostBrightnessVal">110</span>
+              </div>
+              <div class="boost-slider-row">
+                <label>Saturazione</label>
+                <input type="range" id="boostSaturation" class="slider slider-sm" min="80" max="160" value="120">
+                <span id="boostSaturationVal">120</span>
+              </div>
+              <div class="boost-slider-row">
+                <label>Nitidezza</label>
+                <input type="range" id="boostSharpen" class="slider slider-sm" min="0" max="30" value="10">
+                <span id="boostSharpenVal">10</span>
+              </div>
+            </div>
+            <div class="preview-tool-row" style="margin-top:6px;">
+              <button class="btn btn-accent btn-xs" id="btnBoostPreview">Anteprima</button>
+              <button class="btn btn-outline btn-xs" id="btnBoostSave">Salva 1280x720</button>
+            </div>
+          </div>
+
+          <!-- Background Replace -->
+          <div class="preview-tool-group">
+            <label class="setting-label">Background</label>
+            <div class="preview-tool-row">
+              <select id="bgReplaceMode" class="select select-sm" style="flex:1;">
+                <option value="">Nessuno</option>
+                <option value="color-remove">Rimuovi colore</option>
+                <option value="ai-blur">AI Background Blur</option>
+                <option value="solid">Colore solido</option>
+              </select>
+            </div>
+            <div id="bgReplaceColorOpts" style="display:none;margin-top:6px;">
+              <div class="preview-tool-row">
+                <label style="font-size:11px;min-width:60px;">Colore</label>
+                <input type="color" id="bgTargetColor" value="#ffffff">
+                <label style="font-size:11px;min-width:60px;">Tolleranza</label>
+                <input type="range" id="bgTolerance" class="slider slider-sm" min="5" max="80" value="30" style="flex:1;">
+                <span id="bgToleranceVal" style="font-size:11px;">30</span>
+              </div>
+              <div class="preview-tool-row" style="margin-top:4px;">
+                <label style="font-size:11px;min-width:60px;">Sostituz.</label>
+                <select id="bgReplacement" class="select select-sm" style="flex:1;">
+                  <option value="transparent">Trasparente</option>
+                  <option value="blur">Sfocatura</option>
+                  <option value="color">Colore</option>
+                </select>
+                <input type="color" id="bgReplacementColor" value="#000000" style="display:none;">
+              </div>
+            </div>
+            <div class="preview-tool-row" style="margin-top:6px;">
+              <button class="btn btn-accent btn-xs" id="btnBgReplace">Applica</button>
+              <button class="btn btn-outline btn-xs" id="btnBgReplaceSave" style="display:none;">Salva</button>
+            </div>
+          </div>
+
+          <!-- AI Compression Analysis -->
+          <div class="preview-tool-group">
+            <label class="setting-label">AI Compression Analysis</label>
+            <button class="btn btn-accent btn-xs" id="btnAiCompression" style="width:100%;">Analizza Immagine</button>
+            <div id="aiCompressionResult" style="display:none;margin-top:8px;">
+              <div id="aiCompressionInfo" class="ai-compression-info"></div>
+              <button class="btn btn-outline btn-xs" id="btnApplyAiCompression" style="margin-top:6px;">Applica Suggerimenti</button>
+            </div>
+          </div>
+        </div>
+
         <!-- AI-powered sections -->
         <div class="preview-ai-section">
           <div class="preview-ai-group">
@@ -528,27 +682,148 @@
 
   <!-- Watch Folder Modal -->
   <div class="modal-overlay" id="watchModal" style="display:none;">
-    <div class="modal">
+    <div class="modal modal-lg">
       <div class="modal-header">
         <h3>Watch Folder</h3>
         <button class="modal-close" id="closeWatchModal">&times;</button>
       </div>
       <div class="modal-body">
-        <p>Seleziona una cartella da monitorare. Le nuove immagini saranno ottimizzate automaticamente.</p>
+        <p>Seleziona una cartella da monitorare. Le nuove immagini saranno ottimizzate automaticamente con le impostazioni correnti.</p>
         <div class="folder-picker">
           <input type="text" id="watchFolderPath" class="input" placeholder="Scegli cartella..." readonly>
           <button class="btn btn-ghost btn-xs" id="btnSelectWatchFolder">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h4l2 2h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
           </button>
         </div>
+        <label class="checkbox-label" style="margin-top:8px;">
+          <input type="checkbox" id="chkWatchOrganizeByDate">
+          <span>Organizza output per data (YYYY-MM-DD/)</span>
+        </label>
         <div id="watchStatus" class="watch-status" style="display:none;">
           <span class="watch-dot"></span>
           <span>Monitoraggio attivo</span>
+          <span class="watch-counter" id="watchCounter" style="margin-left:auto;font-size:11px;">0 processati</span>
+        </div>
+        <!-- Activity Log -->
+        <div id="watchActivityLog" class="watch-activity-log" style="display:none;">
+          <label class="setting-label" style="margin-top:12px;">Activity Log</label>
+          <div class="watch-log-table-wrap">
+            <table class="watch-log-table">
+              <thead>
+                <tr>
+                  <th>Ora</th>
+                  <th>File</th>
+                  <th>Stato</th>
+                  <th>Risparmio</th>
+                </tr>
+              </thead>
+              <tbody id="watchLogBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" id="btnStopWatch" style="display:none;">Ferma</button>
         <button class="btn btn-accent" id="btnStartWatch">Avvia monitoraggio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi Export Modal -->
+  <div class="modal-overlay" id="multiExportModal" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Multi-Platform Export</h3>
+        <button class="modal-close" id="closeMultiExportModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Esporta le immagini in formati ottimizzati per ogni piattaforma.</p>
+        <label class="setting-label">Piattaforme</label>
+        <div id="multiExportPlatforms" class="multi-export-platforms"></div>
+        <div class="folder-picker" style="margin-top:12px;">
+          <input type="text" id="multiExportOutputDir" class="input" placeholder="Cartella output (default: multi-export/)" readonly>
+          <button class="btn btn-ghost btn-xs" id="btnSelectMultiExportDir">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h4l2 2h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+          </button>
+        </div>
+        <div id="multiExportProgress" style="display:none;margin-top:12px;">
+          <div class="progress-bar"><div class="progress-fill" id="multiExportProgressBar" style="width:0%"></div></div>
+          <p id="multiExportProgressText" style="font-size:11px;color:var(--text-muted);margin-top:4px;"></p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-accent" id="btnStartMultiExport">Esporta per tutte le piattaforme</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Duplicates Modal -->
+  <div class="modal-overlay" id="duplicatesModal" style="display:none;">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>Cerca Duplicati</h3>
+        <button class="modal-close" id="closeDuplicatesModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Trova immagini simili o duplicate nella lista usando perceptual hashing.</p>
+        <div class="preview-tool-row" style="margin-bottom:12px;">
+          <label style="font-size:12px;min-width:80px;">Soglia (0-10)</label>
+          <input type="range" id="duplicatesThreshold" class="slider slider-sm" min="0" max="10" value="5" style="flex:1;">
+          <span id="duplicatesThresholdVal" style="font-size:12px;min-width:20px;">5</span>
+        </div>
+        <button class="btn btn-accent btn-sm" id="btnSearchDuplicates" style="width:100%;margin-bottom:12px;">Cerca Duplicati</button>
+        <div id="duplicatesProgress" style="display:none;">
+          <p id="duplicatesProgressText" style="font-size:11px;color:var(--text-muted);text-align:center;"></p>
+        </div>
+        <div id="duplicatesResults"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Responsive Generator Modal -->
+  <div class="modal-overlay" id="responsiveModal" style="display:none;">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>Responsive Web Generator</h3>
+        <button class="modal-close" id="closeResponsiveModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Genera set di immagini responsive con srcset, formati multipli e placeholder.</p>
+        <label class="setting-label">Dimensioni (larghezza)</label>
+        <div id="responsiveSizes" class="responsive-checkboxes">
+          <label class="checkbox-label"><input type="checkbox" value="320" checked> 320px</label>
+          <label class="checkbox-label"><input type="checkbox" value="640" checked> 640px</label>
+          <label class="checkbox-label"><input type="checkbox" value="768" checked> 768px</label>
+          <label class="checkbox-label"><input type="checkbox" value="1024" checked> 1024px</label>
+          <label class="checkbox-label"><input type="checkbox" value="1280" checked> 1280px</label>
+          <label class="checkbox-label"><input type="checkbox" value="1920" checked> 1920px</label>
+        </div>
+        <label class="setting-label" style="margin-top:12px;">Formati</label>
+        <div id="responsiveFormats" class="responsive-checkboxes">
+          <label class="checkbox-label"><input type="checkbox" value="webp" checked> WebP</label>
+          <label class="checkbox-label"><input type="checkbox" value="avif" checked> AVIF</label>
+          <label class="checkbox-label"><input type="checkbox" value="jpg" checked> JPG (fallback)</label>
+        </div>
+        <div class="preview-tool-row" style="margin-top:12px;">
+          <label style="font-size:12px;min-width:60px;">Qualita</label>
+          <input type="range" id="responsiveQuality" class="slider slider-sm" min="40" max="100" value="80" style="flex:1;">
+          <span id="responsiveQualityVal" style="font-size:12px;">80</span>
+        </div>
+        <div class="folder-picker" style="margin-top:12px;">
+          <input type="text" id="responsiveOutputDir" class="input" placeholder="Cartella output (default: responsive/)" readonly>
+          <button class="btn btn-ghost btn-xs" id="btnSelectResponsiveDir">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h4l2 2h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+          </button>
+        </div>
+        <button class="btn btn-accent btn-sm" id="btnGenerateResponsive" style="width:100%;margin-top:12px;">Genera Set Responsive</button>
+        <div id="responsiveResult" style="display:none;margin-top:12px;">
+          <label class="setting-label">HTML Snippet</label>
+          <textarea id="responsiveHtmlSnippet" class="input" rows="6" readonly style="font-family:monospace;font-size:11px;"></textarea>
+          <button class="btn btn-ghost btn-xs" id="btnCopyResponsiveHtml" style="margin-top:4px;">Copia HTML</button>
+          <label class="setting-label" style="margin-top:8px;">File Generati</label>
+          <div id="responsiveFileList" class="responsive-file-list"></div>
+          <div id="responsivePlaceholder" style="margin-top:8px;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -585,6 +860,12 @@
   <script src="js/watermark.js"></script>
   <script src="js/preview.js"></script>
   <script src="js/ai-assistant.js"></script>
+  <script src="js/safe-area.js"></script>
+  <script src="js/smart-crop.js"></script>
+  <script src="js/multi-export.js"></script>
+  <script src="js/duplicate-detect.js"></script>
+  <script src="js/responsive-gen.js"></script>
+  <script src="js/watch-folder.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

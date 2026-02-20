@@ -48,7 +48,12 @@ const AppState = {
       imagePath: null,
       opacity: 0.5,
       position: 'bottom-right',
-      margin: 20
+      margin: 20,
+      sizeMode: 'fixed',
+      adaptivePercent: 4,
+      positionMode: 'fixed',
+      patternGap: 100,
+      patternRotation: -30
     }
   },
 

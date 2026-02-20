@@ -16,8 +16,19 @@
   Preview.init();
   AIAssistant.init();
 
-  // Watch Folder modal
-  initWatchFolder();
+  // New feature modules
+  if (typeof SafeArea !== 'undefined') SafeArea.init();
+  if (typeof SmartCrop !== 'undefined') SmartCrop.init();
+  if (typeof MultiExport !== 'undefined') MultiExport.init();
+  if (typeof DuplicateDetect !== 'undefined') DuplicateDetect.init();
+  if (typeof ResponsiveGen !== 'undefined') ResponsiveGen.init();
+  if (typeof WatchFolder !== 'undefined') WatchFolder.init();
+
+  // Preview tools initialization
+  initPreviewTools();
+
+  // Watch Folder modal (fallback if WatchFolder module not loaded)
+  if (typeof WatchFolder === 'undefined') initWatchFolder();
 
   // Settings toggle
   initSettingsToggle();
@@ -242,6 +253,284 @@
     window.api.onWatchProcessed((data) => {
       Utils.showToast(`Convertito: ${data.inputPath.split(/[\\/]/).pop()} (-${data.savedPercent}%)`, 'success');
     });
+  }
+
+  /**
+   * Preview modal tools (Boost, BG Replace, AI Compression, Safe Area, Smart Crop)
+   */
+  function initPreviewTools() {
+    // --- Boost sliders live value display ---
+    const boostBrightness = document.getElementById('boostBrightness');
+    const boostSaturation = document.getElementById('boostSaturation');
+    const boostSharpen = document.getElementById('boostSharpen');
+    if (boostBrightness) boostBrightness.addEventListener('input', () => { document.getElementById('boostBrightnessVal').textContent = boostBrightness.value; });
+    if (boostSaturation) boostSaturation.addEventListener('input', () => { document.getElementById('boostSaturationVal').textContent = boostSaturation.value; });
+    if (boostSharpen) boostSharpen.addEventListener('input', () => { document.getElementById('boostSharpenVal').textContent = boostSharpen.value; });
+
+    // --- Boost preview ---
+    const btnBoostPreview = document.getElementById('btnBoostPreview');
+    if (btnBoostPreview) {
+      btnBoostPreview.addEventListener('click', async () => {
+        const file = Preview.currentFile;
+        if (!file) return;
+        btnBoostPreview.disabled = true;
+        btnBoostPreview.textContent = 'Elaborando...';
+        try {
+          const result = await window.api.thumbnailBoost(file.path, {
+            brightness: parseInt(boostBrightness.value),
+            saturation: parseInt(boostSaturation.value),
+            sharpen: parseInt(boostSharpen.value),
+            resize: false
+          });
+          if (result.success) {
+            const previewImg = document.getElementById('previewConverted');
+            previewImg.src = 'data:image/jpeg;base64,' + result.data;
+            Utils.showToast('Boost applicato in anteprima', 'success');
+          }
+        } catch (err) {
+          Utils.showToast('Errore boost: ' + err.message, 'error');
+        } finally {
+          btnBoostPreview.disabled = false;
+          btnBoostPreview.textContent = 'Anteprima';
+        }
+      });
+    }
+
+    // --- Boost save ---
+    const btnBoostSave = document.getElementById('btnBoostSave');
+    if (btnBoostSave) {
+      btnBoostSave.addEventListener('click', async () => {
+        const file = Preview.currentFile;
+        if (!file) return;
+        try {
+          const result = await window.api.thumbnailBoostSave(file.path, {
+            brightness: parseInt(boostBrightness.value),
+            saturation: parseInt(boostSaturation.value),
+            sharpen: parseInt(boostSharpen.value)
+          });
+          if (result.success) {
+            Utils.showToast('Thumbnail salvato: ' + result.outputPath, 'success');
+          } else {
+            Utils.showToast('Errore: ' + (result.error || 'sconosciuto'), 'error');
+          }
+        } catch (err) {
+          Utils.showToast('Errore: ' + err.message, 'error');
+        }
+      });
+    }
+
+    // --- Background Replace mode toggle ---
+    const bgMode = document.getElementById('bgReplaceMode');
+    const bgColorOpts = document.getElementById('bgReplaceColorOpts');
+    if (bgMode) {
+      bgMode.addEventListener('change', () => {
+        bgColorOpts.style.display = bgMode.value === 'color-remove' ? '' : 'none';
+      });
+    }
+
+    // --- BG Replacement color toggle ---
+    const bgReplacement = document.getElementById('bgReplacement');
+    const bgReplacementColor = document.getElementById('bgReplacementColor');
+    if (bgReplacement) {
+      bgReplacement.addEventListener('change', () => {
+        bgReplacementColor.style.display = bgReplacement.value === 'color' ? '' : 'none';
+      });
+    }
+
+    // --- BG Tolerance display ---
+    const bgTolerance = document.getElementById('bgTolerance');
+    if (bgTolerance) {
+      bgTolerance.addEventListener('input', () => {
+        document.getElementById('bgToleranceVal').textContent = bgTolerance.value;
+      });
+    }
+
+    // --- BG Replace apply ---
+    const btnBgReplace = document.getElementById('btnBgReplace');
+    if (btnBgReplace) {
+      btnBgReplace.addEventListener('click', async () => {
+        const file = Preview.currentFile;
+        if (!file) return;
+        const mode = bgMode.value;
+        if (!mode) { Utils.showToast('Seleziona una modalita', 'warning'); return; }
+
+        btnBgReplace.disabled = true;
+        btnBgReplace.textContent = 'Elaborando...';
+        try {
+          let result;
+          if (mode === 'ai-blur') {
+            result = await window.api.bgReplaceAiBlur(file.path);
+          } else {
+            result = await window.api.bgReplaceColor(file.path, {
+              targetColor: document.getElementById('bgTargetColor').value,
+              tolerance: parseInt(bgTolerance.value),
+              replacement: bgReplacement.value,
+              replacementColor: bgReplacementColor.value
+            });
+          }
+          if (result.success) {
+            const previewImg = document.getElementById('previewConverted');
+            previewImg.src = 'data:image/png;base64,' + result.data;
+            document.getElementById('btnBgReplaceSave').style.display = '';
+            Utils.showToast('Background modificato', 'success');
+          } else {
+            Utils.showToast('Errore: ' + (result.error || 'sconosciuto'), 'error');
+          }
+        } catch (err) {
+          Utils.showToast('Errore: ' + err.message, 'error');
+        } finally {
+          btnBgReplace.disabled = false;
+          btnBgReplace.textContent = 'Applica';
+        }
+      });
+    }
+
+    // --- BG Replace save ---
+    const btnBgReplaceSave = document.getElementById('btnBgReplaceSave');
+    if (btnBgReplaceSave) {
+      btnBgReplaceSave.addEventListener('click', async () => {
+        const file = Preview.currentFile;
+        if (!file) return;
+        const previewImg = document.getElementById('previewConverted');
+        const base64 = previewImg.src.replace(/^data:image\/\w+;base64,/, '');
+        try {
+          const result = await window.api.bgReplaceSave(file.path, base64);
+          if (result.success) {
+            Utils.showToast('Salvato: ' + result.outputPath, 'success');
+          }
+        } catch (err) {
+          Utils.showToast('Errore: ' + err.message, 'error');
+        }
+      });
+    }
+
+    // --- AI Compression ---
+    const btnAiCompression = document.getElementById('btnAiCompression');
+    if (btnAiCompression) {
+      btnAiCompression.addEventListener('click', async () => {
+        const file = Preview.currentFile;
+        if (!file) return;
+        btnAiCompression.disabled = true;
+        btnAiCompression.textContent = 'Analizzando...';
+        try {
+          const result = await window.api.aiAnalyzeCompression(file.path);
+          if (result.success) {
+            const info = document.getElementById('aiCompressionInfo');
+            const d = result.data;
+            info.innerHTML = `
+              <strong>Tipo:</strong> ${d.imageType}<br>
+              <strong>Formato:</strong> ${d.format} · <strong>Qualita:</strong> ${d.quality}<br>
+              <strong>Sharpen:</strong> ${d.sharpen ? 'Si' : 'No'}<br>
+              <strong>Reasoning:</strong> <em>${d.reasoning || ''}</em>
+            `;
+            document.getElementById('aiCompressionResult').style.display = '';
+            // Store for apply
+            btnAiCompression._data = d;
+          } else {
+            Utils.showToast('Errore: ' + (result.error || 'sconosciuto'), 'error');
+          }
+        } catch (err) {
+          Utils.showToast('Errore AI: ' + err.message, 'error');
+        } finally {
+          btnAiCompression.disabled = false;
+          btnAiCompression.textContent = 'Analizza Immagine';
+        }
+      });
+    }
+
+    // --- Apply AI Compression suggestions ---
+    const btnApplyAiCompression = document.getElementById('btnApplyAiCompression');
+    if (btnApplyAiCompression) {
+      btnApplyAiCompression.addEventListener('click', () => {
+        const d = document.getElementById('btnAiCompression')._data;
+        if (!d) return;
+        // Apply format
+        const formatRadio = document.querySelector(`input[name="format"][value="${d.format}"]`);
+        if (formatRadio) { formatRadio.checked = true; AppState.settings.format = d.format; }
+        // Apply quality
+        if (d.quality) {
+          AppState.settings.quality = d.quality;
+          document.getElementById('qualitySlider').value = d.quality;
+          document.getElementById('qualityValue').textContent = d.quality;
+        }
+        // Apply sharpen
+        if (typeof d.sharpen === 'boolean') {
+          AppState.settings.sharpen = d.sharpen;
+          document.getElementById('chkSharpen').checked = d.sharpen;
+        }
+        Utils.showToast('Impostazioni AI applicate', 'success');
+      });
+    }
+
+    // --- Smart Crop ---
+    const btnSmartCrop = document.getElementById('btnSmartCrop');
+    if (btnSmartCrop) {
+      btnSmartCrop.addEventListener('click', async () => {
+        const file = Preview.currentFile;
+        if (!file) return;
+        const platform = document.getElementById('smartCropPlatform').value;
+        btnSmartCrop.disabled = true;
+        btnSmartCrop.textContent = 'Rilevando...';
+        try {
+          // Detect subject
+          const detectResult = await window.api.aiDetectSubject(file.path);
+          if (!detectResult.success) throw new Error(detectResult.error || 'Rilevamento fallito');
+
+          // Crop
+          const cropResult = await window.api.smartCrop(file.path, platform, detectResult.data);
+          if (cropResult.success) {
+            const container = document.getElementById('smartCropPreview');
+            container.innerHTML = `<img src="data:image/jpeg;base64,${cropResult.data}" alt="Crop">`;
+            document.getElementById('smartCropResult').style.display = '';
+            // Store for save
+            btnSmartCrop._cropData = { platform, region: detectResult.data };
+            Utils.showToast('Smart Crop completato', 'success');
+          } else {
+            Utils.showToast('Errore crop: ' + (cropResult.error || ''), 'error');
+          }
+        } catch (err) {
+          Utils.showToast('Errore: ' + err.message, 'error');
+        } finally {
+          btnSmartCrop.disabled = false;
+          btnSmartCrop.textContent = 'Crop AI';
+        }
+      });
+    }
+
+    // --- Smart Crop save ---
+    const btnSmartCropSave = document.getElementById('btnSmartCropSave');
+    if (btnSmartCropSave) {
+      btnSmartCropSave.addEventListener('click', async () => {
+        const file = Preview.currentFile;
+        if (!file) return;
+        const cd = document.getElementById('btnSmartCrop')._cropData;
+        if (!cd) return;
+        try {
+          const result = await window.api.smartCropSave(file.path, cd.platform, cd.region);
+          if (result.success) {
+            Utils.showToast('Crop salvato: ' + result.outputPath, 'success');
+          }
+        } catch (err) {
+          Utils.showToast('Errore: ' + err.message, 'error');
+        }
+      });
+    }
+
+    // --- Duplicates threshold display ---
+    const dupThreshold = document.getElementById('duplicatesThreshold');
+    if (dupThreshold) {
+      dupThreshold.addEventListener('input', () => {
+        document.getElementById('duplicatesThresholdVal').textContent = dupThreshold.value;
+      });
+    }
+
+    // --- Responsive quality display ---
+    const respQuality = document.getElementById('responsiveQuality');
+    if (respQuality) {
+      respQuality.addEventListener('input', () => {
+        document.getElementById('responsiveQualityVal').textContent = respQuality.value;
+      });
+    }
   }
 
   // Ready

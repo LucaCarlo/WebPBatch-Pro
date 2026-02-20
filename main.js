@@ -9,6 +9,12 @@ const { validateLicense, saveLicense, getLicenseStatus } = require('./lib/licens
 const { getLogger } = require('./lib/logger');
 const { startWatcher, stopWatcher } = require('./lib/watcher');
 const { AIProvider } = require('./lib/ai-provider');
+const { thumbnailBoost } = require('./lib/thumbnail-boost');
+const { smartCrop } = require('./lib/smart-crop');
+const { multiExport, PLATFORMS } = require('./lib/multi-export');
+const { findDuplicates } = require('./lib/duplicate-detect');
+const { replaceBackgroundByColor, aiBackgroundBlur } = require('./lib/background-replace');
+const { generateResponsiveSet } = require('./lib/responsive-gen');
 
 let mainWindow;
 let processorController = null;
@@ -543,6 +549,232 @@ ipcMain.handle('ai-generate-metadata', async (event, filePath) => {
     return { success: true, metadata: result };
   } catch (err) {
     if (logger) logger.error('AI generate metadata failed', err);
+    return { success: false, error: err.message };
+  }
+});
+
+// ── YouTube Thumbnail Booster ──
+
+ipcMain.handle('thumbnail-boost', async (event, filePath, options) => {
+  try {
+    const { buffer, info } = await thumbnailBoost(filePath, { ...options, resize: false });
+    return {
+      success: true,
+      preview: `data:image/jpeg;base64,${buffer.toString('base64')}`,
+      width: info.width,
+      height: info.height,
+      size: buffer.length
+    };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('thumbnail-boost-save', async (event, filePath, options, outputDir) => {
+  try {
+    const { buffer, info } = await thumbnailBoost(filePath, options);
+    const baseName = path.parse(path.basename(filePath)).name;
+    if (!outputDir) outputDir = path.dirname(filePath);
+    await fs.promises.mkdir(outputDir, { recursive: true });
+    const outputPath = path.join(outputDir, `${baseName}-yt-boost.jpg`);
+    await fs.promises.writeFile(outputPath, buffer);
+    return { success: true, outputPath, size: buffer.length };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// ── AI Compression Intelligence ──
+
+ipcMain.handle('ai-analyze-compression', async (event, filePath) => {
+  try {
+    const provider = ensureAiProvider();
+    const sharp = require('sharp');
+    const buf = await sharp(filePath, { failOn: 'none' })
+      .resize(512, 512, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 70 })
+      .toBuffer();
+    const base64 = `data:image/jpeg;base64,${buf.toString('base64')}`;
+    const result = await provider.analyzeForCompression(base64);
+    return { success: true, analysis: result };
+  } catch (err) {
+    if (logger) logger.error('AI analyze compression failed', err);
+    return { success: false, error: err.message };
+  }
+});
+
+// ── AI Smart Crop ──
+
+ipcMain.handle('ai-detect-subject', async (event, filePath) => {
+  try {
+    const provider = ensureAiProvider();
+    const sharp = require('sharp');
+    const buf = await sharp(filePath, { failOn: 'none' })
+      .resize(512, 512, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 70 })
+      .toBuffer();
+    const base64 = `data:image/jpeg;base64,${buf.toString('base64')}`;
+    const result = await provider.detectSubjectRegion(base64);
+    return { success: true, region: result };
+  } catch (err) {
+    if (logger) logger.error('AI detect subject failed', err);
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('smart-crop', async (event, filePath, platformId, region) => {
+  try {
+    const { buffer, info, crop } = await smartCrop(filePath, platformId, region);
+    const sharp = require('sharp');
+    const previewBuf = await sharp(buffer)
+      .resize(600, 600, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 85 })
+      .toBuffer();
+    return {
+      success: true,
+      preview: `data:image/jpeg;base64,${previewBuf.toString('base64')}`,
+      width: info.width,
+      height: info.height
+    };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('smart-crop-save', async (event, filePath, platformId, region) => {
+  try {
+    const { buffer, info } = await smartCrop(filePath, platformId, region);
+    const baseName = path.parse(path.basename(filePath)).name;
+    const outputDir = path.dirname(filePath);
+    const outputPath = path.join(outputDir, `${baseName}-${platformId}.jpg`);
+    const sharp = require('sharp');
+    const jpgBuf = await sharp(buffer).jpeg({ quality: 90 }).toBuffer();
+    await fs.promises.writeFile(outputPath, jpgBuf);
+    return { success: true, outputPath };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// ── Multi-Platform Export ──
+
+ipcMain.handle('multi-export', async (event, filePaths, platformIds, outputDir) => {
+  try {
+    let totalSuccess = 0;
+    let totalCount = 0;
+    for (const filePath of filePaths) {
+      const result = await multiExport(filePath, platformIds, outputDir, (progress) => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('multi-export-progress', progress);
+        }
+      });
+      totalSuccess += result.success;
+      totalCount += result.total;
+    }
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('multi-export-complete', { success: totalSuccess, total: totalCount });
+    }
+    return { success: true, data: { success: totalSuccess, total: totalCount } };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// ── Duplicate Detection ──
+
+ipcMain.handle('find-duplicates', async (event, files, threshold) => {
+  try {
+    const groups = await findDuplicates(files, threshold, (progress) => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('duplicates-progress', progress);
+      }
+    });
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('duplicates-result', { groups });
+    }
+    return { success: true, groups };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// ── Background Replace ──
+
+ipcMain.handle('bg-replace-color', async (event, filePath, options) => {
+  try {
+    const buffer = await replaceBackgroundByColor(filePath, options);
+    const sharp = require('sharp');
+    const previewBuf = await sharp(buffer)
+      .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+      .png()
+      .toBuffer();
+    return { success: true, preview: `data:image/png;base64,${previewBuf.toString('base64')}` };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('bg-replace-ai-blur', async (event, filePath) => {
+  try {
+    const provider = ensureAiProvider();
+    const sharp = require('sharp');
+    const buf = await sharp(filePath, { failOn: 'none' })
+      .resize(512, 512, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 70 })
+      .toBuffer();
+    const base64 = `data:image/jpeg;base64,${buf.toString('base64')}`;
+    const region = await provider.detectSubjectRegion(base64);
+
+    const resultBuf = await aiBackgroundBlur(filePath, region);
+    const previewBuf = await sharp(resultBuf)
+      .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 85 })
+      .toBuffer();
+    return { success: true, preview: `data:image/jpeg;base64,${previewBuf.toString('base64')}` };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('bg-replace-save', async (event, filePath, options) => {
+  try {
+    let buffer;
+    if (options.mode === 'ai-blur') {
+      const provider = ensureAiProvider();
+      const sharp = require('sharp');
+      const aiBuf = await sharp(filePath, { failOn: 'none' })
+        .resize(512, 512, { fit: 'inside', withoutEnlargement: true })
+        .jpeg({ quality: 70 })
+        .toBuffer();
+      const base64 = `data:image/jpeg;base64,${aiBuf.toString('base64')}`;
+      const region = await provider.detectSubjectRegion(base64);
+      buffer = await aiBackgroundBlur(filePath, region);
+    } else {
+      buffer = await replaceBackgroundByColor(filePath, options);
+    }
+    const baseName = path.parse(path.basename(filePath)).name;
+    const outputDir = options.outputDir || path.dirname(filePath);
+    await fs.promises.mkdir(outputDir, { recursive: true });
+    const ext = options.mode === 'ai-blur' ? '.jpg' : '.png';
+    const outputPath = path.join(outputDir, `${baseName}-bg${ext}`);
+    await fs.promises.writeFile(outputPath, buffer);
+    return { success: true, outputPath };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// ── Responsive Web Generator ──
+
+ipcMain.handle('responsive-generate', async (event, filePath, options) => {
+  try {
+    const manifest = await generateResponsiveSet(filePath, options, (progress) => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('responsive-progress', progress);
+      }
+    });
+    return { success: true, manifest };
+  } catch (err) {
     return { success: false, error: err.message };
   }
 });

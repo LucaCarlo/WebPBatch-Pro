@@ -67,5 +67,52 @@ const WatermarkUI = {
     document.getElementById('watermarkMargin').addEventListener('change', (e) => {
       AppState.settings.watermark.margin = parseInt(e.target.value) || 20;
     });
+
+    // ── Advanced Watermark Controls ──
+
+    // Size Mode
+    const sizeModeSelect = document.getElementById('watermarkSizeMode');
+    const adaptiveRow = document.getElementById('watermarkAdaptiveRow');
+    if (sizeModeSelect) {
+      sizeModeSelect.addEventListener('change', () => {
+        AppState.settings.watermark.sizeMode = sizeModeSelect.value;
+        adaptiveRow.style.display = sizeModeSelect.value === 'adaptive' ? '' : 'none';
+      });
+    }
+
+    // Adaptive Percent
+    const adaptiveInput = document.getElementById('watermarkAdaptivePercent');
+    if (adaptiveInput) {
+      adaptiveInput.addEventListener('change', () => {
+        AppState.settings.watermark.adaptivePercent = parseInt(adaptiveInput.value) || 4;
+      });
+    }
+
+    // Position Mode
+    const posModeSelect = document.getElementById('watermarkPositionMode');
+    const patternOpts = document.getElementById('watermarkPatternOpts');
+    if (posModeSelect) {
+      posModeSelect.addEventListener('change', () => {
+        AppState.settings.watermark.positionMode = posModeSelect.value;
+        const showPattern = posModeSelect.value === 'pattern' || posModeSelect.value === 'subtle';
+        patternOpts.style.display = showPattern ? '' : 'none';
+      });
+    }
+
+    // Pattern Gap
+    const patternGapInput = document.getElementById('watermarkPatternGap');
+    if (patternGapInput) {
+      patternGapInput.addEventListener('change', () => {
+        AppState.settings.watermark.patternGap = parseInt(patternGapInput.value) || 100;
+      });
+    }
+
+    // Pattern Rotation
+    const patternRotInput = document.getElementById('watermarkPatternRotation');
+    if (patternRotInput) {
+      patternRotInput.addEventListener('change', () => {
+        AppState.settings.watermark.patternRotation = parseInt(patternRotInput.value) || -30;
+      });
+    }
   }
 };

@@ -957,6 +957,218 @@ button:focus-visible {
   font-size: 12px;
 }
 
+/* ══════════ PREVIEW TOOLS ══════════ */
+.preview-tools-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.preview-tool-group {
+  padding: 10px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+}
+
+.preview-tool-group .setting-label {
+  margin-bottom: 6px;
+}
+
+.preview-tool-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Boost Sliders */
+.boost-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.boost-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.boost-slider-row label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  min-width: 70px;
+}
+
+.boost-slider-row .slider {
+  flex: 1;
+}
+
+.boost-slider-row span {
+  font-size: 11px;
+  color: var(--text-muted);
+  min-width: 24px;
+  text-align: right;
+}
+
+/* Smart Crop Preview */
+.smart-crop-preview {
+  margin-top: 8px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  max-height: 200px;
+}
+
+.smart-crop-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* AI Compression Info */
+.ai-compression-info {
+  padding: 8px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.ai-compression-info strong {
+  color: var(--text);
+}
+
+/* ══════════ SAFE AREA OVERLAY ══════════ */
+.safe-area-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.safe-area-zone {
+  position: absolute;
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.safe-area-zone-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(239, 68, 68, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ══════════ WATCH FOLDER ENHANCED ══════════ */
+.watch-activity-log {
+  margin-top: 12px;
+}
+
+.watch-log-table-wrap {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.watch-log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.watch-log-table th {
+  padding: 4px 8px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+}
+
+.watch-log-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+  color: var(--text-secondary);
+}
+
+.watch-log-table .log-ok { color: var(--success); }
+.watch-log-table .log-err { color: var(--danger); }
+
+/* ══════════ DUPLICATE DETECTION ══════════ */
+.duplicate-group {
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.duplicate-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg);
+  font-size: 12px;
+}
+
+.duplicate-thumbnails {
+  padding: 8px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.duplicate-thumb {
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.duplicate-keep {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.duplicate-name {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duplicate-badge-keep {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--success);
+  text-transform: uppercase;
+}
+
+.duplicate-badge-remove {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--danger);
+  text-transform: uppercase;
+}
+
 /* ══════════ SHORTCUTS MODAL ══════════ */
 .shortcuts-body {
   display: flex;

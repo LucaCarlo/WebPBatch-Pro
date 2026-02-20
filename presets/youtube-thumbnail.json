@@ -1,0 +1,15 @@
+{
+  "id": "youtube-thumbnail",
+  "name": "YouTube Thumbnail Boost",
+  "description": "Miniatura YouTube ottimizzata con boost colori e nitidezza",
+  "format": "jpg",
+  "quality": 90,
+  "lossless": false,
+  "resizeMode": "crop",
+  "cropWidth": 1280,
+  "cropHeight": 720,
+  "sharpen": true,
+  "stripMetadata": true,
+  "namingTemplate": "{name}-yt",
+  "_builtin": true
+}

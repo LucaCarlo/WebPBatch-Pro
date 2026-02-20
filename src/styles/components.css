@@ -578,3 +578,45 @@ input[type="color"] {
   background: var(--bg-hover);
   color: var(--danger);
 }
+
+/* ══════════ MULTI EXPORT ══════════ */
+.multi-export-platforms {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.multi-export-platform {
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.multi-export-platform:hover {
+  background: var(--bg-hover);
+}
+
+/* ══════════ RESPONSIVE GENERATOR ══════════ */
+.responsive-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+
+.responsive-file-list {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.responsive-file-item {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+  color: var(--text-secondary);
+}
+
+.responsive-file-item:last-child {
+  border-bottom: none;
+}
