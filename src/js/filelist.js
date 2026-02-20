@@ -45,6 +45,23 @@ const FileList = {
         this.render();
       });
     });
+
+    // Event delegation for row action buttons (CSP blocks inline onclick)
+    this.tableBody.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-row-action');
+      if (!btn) return;
+      const row = btn.closest('tr');
+      if (!row) return;
+      const fileId = row.dataset.fileId;
+      if (!fileId) return;
+
+      const action = btn.dataset.action;
+      if (action === 'preview') {
+        this.previewFile(fileId);
+      } else if (action === 'remove') {
+        this.removeFile(fileId);
+      }
+    });
   },
 
   updateSortUI() {
@@ -145,10 +162,10 @@ const FileList = {
         <td class="col-result">${resultHtml}</td>
         <td class="col-actions">
           <div class="file-actions">
-            <button class="btn-row-action" onclick="FileList.previewFile('${file.id}')" title="Preview">
+            <button class="btn-row-action" data-action="preview" title="Preview">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>
             </button>
-            <button class="btn-row-action" onclick="FileList.removeFile('${file.id}')" title="Rimuovi">
+            <button class="btn-row-action" data-action="remove" title="Rimuovi">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8"/></svg>
             </button>
           </div>
@@ -219,7 +236,6 @@ const FileList = {
         const result = await window.api.getThumbnail(filePath);
         if (result.success && result.data) {
           this.thumbnailCache.set(filePath, result.data);
-          // Find file by path and update the placeholder
           const file = AppState.files.find(f => f.path === filePath);
           if (file) {
             const row = this.tableBody.querySelector(`tr[data-file-id="${file.id}"]`);
