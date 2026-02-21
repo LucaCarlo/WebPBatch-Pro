@@ -1,5 +1,5 @@
 {
-  "name": "webpbatch-pro",
+  "name": "photopro",
   "version": "1.0.0",
   "description": "Professional batch image converter (WebP, AVIF, JPG, PNG) with AI assistant",
   "homepage": "https://github.com/LucaCarlo/WebPBatch-Pro",
@@ -15,7 +15,7 @@
     "build:mac": "electron-builder --mac",
     "generate-key": "node tools/generate-key.js"
   },
-  "author": "WebPBatch Pro",
+  "author": "PhotoPro",
   "license": "UNLICENSED",
   "private": true,
   "devDependencies": {
@@ -26,8 +26,8 @@
     "sharp": "^0.34.5"
   },
   "build": {
-    "appId": "com.webpbatchpro.app",
-    "productName": "WebPBatch Pro",
+    "appId": "com.photopro.app",
+    "productName": "PhotoPro",
     "directories": {
       "output": "dist"
     },

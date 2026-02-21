@@ -263,6 +263,10 @@
     document.querySelectorAll('.preview-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         const target = tab.getAttribute('data-tab');
+        // If AI tab clicked and AI not configured, show toast
+        if (target === 'ai' && typeof AIAssistant !== 'undefined' && !AIAssistant.isConfigured) {
+          Utils.showToast('Configura l\'Assistente AI nel pannello Impostazioni per usare questa funzione', 'warning');
+        }
         // Deactivate all tabs and contents
         document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.preview-tab-content').forEach(c => c.classList.remove('active'));

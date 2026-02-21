@@ -2,6 +2,8 @@
  * AI Assistant UI controller
  */
 const AIAssistant = {
+  isConfigured: false,
+
   init() {
     // AI Settings inputs
     this.providerSelect = document.getElementById('aiProvider');
@@ -70,11 +72,41 @@ const AIAssistant = {
   },
 
   updateStatus(configured) {
-    if (!this.aiStatus) return;
-    if (configured) {
-      this.aiStatus.innerHTML = '<span class="ai-status-ok">AI Configurata</span>';
-    } else {
-      this.aiStatus.innerHTML = '<span class="ai-status-missing">API key non configurata</span>';
+    this.isConfigured = !!configured;
+
+    if (this.aiStatus) {
+      if (configured) {
+        this.aiStatus.innerHTML = '<span class="ai-status-ok">AI Configurata</span>';
+      } else {
+        this.aiStatus.innerHTML = '<span class="ai-status-missing">API key non configurata</span>';
+      }
+    }
+
+    // Update badge in panel header
+    const badge = document.getElementById('aiStatusBadge');
+    if (badge) {
+      if (configured) {
+        badge.textContent = 'ON';
+        badge.className = 'ai-badge ai-badge-on';
+      } else {
+        badge.textContent = 'OFF';
+        badge.className = 'ai-badge ai-badge-off';
+      }
+    }
+
+    // Lock/unlock AI-dependent tool cards
+    document.querySelectorAll('.tool-card[data-requires-ai]').forEach(card => {
+      if (configured) {
+        card.classList.remove('ai-locked');
+      } else {
+        card.classList.add('ai-locked');
+      }
+    });
+
+    // Show/hide AI required notice
+    const notice = document.getElementById('aiRequiredNotice');
+    if (notice) {
+      notice.classList.toggle('hidden', !!configured);
     }
   },
 

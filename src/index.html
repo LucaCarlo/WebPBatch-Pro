@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file:; font-src 'self'; connect-src https://api.anthropic.com https://api.openai.com https://generativelanguage.googleapis.com">
-  <title>WebPBatch Pro</title>
+  <title>PhotoPro</title>
+  <link rel="icon" type="image/png" href="assets/favicon-photo-pro.png">
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/components.css">
 </head>
@@ -12,8 +13,7 @@
   <!-- ══════════ TOP BAR ══════════ -->
   <header class="topbar">
     <div class="topbar-left">
-      <img class="topbar-logo" src="assets/logo.png" alt="WebPBatch Pro" width="36" height="36">
-      <span class="topbar-title">WebPBatch Pro</span>
+      <img class="topbar-logo-wide" src="assets/logo-photo-pro.png" alt="PhotoPro">
       <span class="topbar-version" id="appVersion"></span>
     </div>
     <div class="topbar-right">
@@ -113,33 +113,36 @@
     <aside class="settings-panel" id="settingsPanel">
       <h3 class="settings-title">Impostazioni</h3>
 
-      <!-- AI Assistant -->
-      <div class="setting-group ai-section">
-        <label class="setting-label">
+      <!-- AI Assistant (collapsible) -->
+      <details class="ai-panel" id="aiPanel">
+        <summary class="ai-panel-header">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v2m0 10v2M1 8h2m10 0h2"/><circle cx="8" cy="8" r="3"/></svg>
-          Assistente AI
-        </label>
-        <div class="ai-config">
-          <select id="aiProvider" class="select select-sm">
-            <option value="anthropic">Anthropic Claude</option>
-            <option value="openai">OpenAI GPT</option>
-            <option value="google">Google Gemini</option>
-          </select>
-          <div class="ai-key-row">
-            <input type="password" id="aiApiKey" class="input input-sm" placeholder="API Key...">
-            <button class="btn btn-ghost btn-xs" id="btnSaveAiConfig" title="Salva configurazione">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2h9l3 3v9H2z"/><path d="M5 2v4h5V2"/><path d="M5 10h6v4H5z"/></svg>
-            </button>
+          <span>Assistente AI</span>
+          <span id="aiStatusBadge" class="ai-badge ai-badge-off">OFF</span>
+        </summary>
+        <div class="ai-panel-body">
+          <div class="ai-config">
+            <select id="aiProvider" class="select select-sm">
+              <option value="anthropic">Anthropic Claude</option>
+              <option value="openai">OpenAI GPT</option>
+              <option value="google">Google Gemini</option>
+            </select>
+            <div class="ai-key-row">
+              <input type="password" id="aiApiKey" class="input input-sm" placeholder="API Key...">
+              <button class="btn btn-ghost btn-xs" id="btnSaveAiConfig" title="Salva configurazione">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2h9l3 3v9H2z"/><path d="M5 2v4h5V2"/><path d="M5 10h6v4H5z"/></svg>
+              </button>
+            </div>
+            <span id="aiStatus" class="ai-status-text"></span>
           </div>
-          <span id="aiStatus" class="ai-status-text"></span>
+          <textarea id="aiDescription" class="input ai-textarea" rows="2" placeholder="Es: 'Foto prodotti per Shopify' o 'Post Instagram promozionale'"></textarea>
+          <button class="btn btn-accent btn-sm ai-suggest-btn" id="btnAiSuggest">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v2m0 10v2M1 8h2m10 0h2"/><circle cx="8" cy="8" r="3"/></svg>
+            Suggerisci Impostazioni
+          </button>
+          <div id="aiSuggestResult" style="display:none;"></div>
         </div>
-        <textarea id="aiDescription" class="input ai-textarea" rows="2" placeholder="Es: 'Foto prodotti per Shopify' o 'Post Instagram promozionale'"></textarea>
-        <button class="btn btn-accent btn-sm ai-suggest-btn" id="btnAiSuggest">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v2m0 10v2M1 8h2m10 0h2"/><circle cx="8" cy="8" r="3"/></svg>
-          Suggerisci Impostazioni
-        </button>
-        <div id="aiSuggestResult" style="display:none;"></div>
-      </div>
+      </details>
 
       <!-- Preset -->
       <div class="setting-group">
@@ -463,14 +466,14 @@
   <div class="modal-overlay" id="aboutModal" style="display:none;">
     <div class="modal">
       <div class="modal-header">
-        <h3>WebPBatch Pro</h3>
+        <h3>PhotoPro</h3>
         <button class="modal-close" id="closeAboutModal">&times;</button>
       </div>
       <div class="modal-body about-body">
         <div class="about-logo-section">
-          <img src="assets/logo.png" alt="WebPBatch Pro" width="64" height="64" class="about-logo">
+          <img src="assets/favicon-photo-pro.png" alt="PhotoPro" width="64" height="64" class="about-logo">
           <div>
-            <h3 class="about-app-name">WebPBatch Pro</h3>
+            <h3 class="about-app-name">PhotoPro</h3>
             <p class="about-version" id="aboutVersion">v1.0.0</p>
           </div>
         </div>
@@ -601,8 +604,11 @@
             </div>
 
             <!-- AI Smart Crop -->
-            <div class="tool-card">
-              <div class="tool-card-header">AI Smart Crop</div>
+            <div class="tool-card" data-requires-ai>
+              <div class="tool-card-header">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.5"><path d="M8 1v2m0 10v2M1 8h2m10 0h2"/><circle cx="8" cy="8" r="3"/></svg>
+                AI Smart Crop
+              </div>
               <div class="tool-card-body">
                 <div class="preview-tool-row">
                   <select id="smartCropPlatform" class="select select-sm" style="flex:1;">
@@ -659,8 +665,11 @@
             </div>
 
             <!-- AI Compression Analysis -->
-            <div class="tool-card">
-              <div class="tool-card-header">AI Compression Analysis</div>
+            <div class="tool-card" data-requires-ai>
+              <div class="tool-card-header">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.5"><path d="M8 1v2m0 10v2M1 8h2m10 0h2"/><circle cx="8" cy="8" r="3"/></svg>
+                AI Compression Analysis
+              </div>
               <div class="tool-card-body">
                 <p style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Analizza il tipo di immagine e suggerisce formato/qualita ottimali.</p>
                 <button class="btn btn-accent btn-xs" id="btnAiCompression" style="width:100%;">Analizza Immagine</button>
@@ -675,6 +684,10 @@
 
         <!-- TAB: AI SEO -->
         <div class="preview-tab-content" data-tab-content="ai">
+          <div class="ai-required-notice" id="aiRequiredNotice">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v2m0 10v2M1 8h2m10 0h2"/><circle cx="8" cy="8" r="3"/></svg>
+            <p>Per usare le funzioni AI, configura l'Assistente AI nel pannello Impostazioni.</p>
+          </div>
           <div class="preview-ai-section">
             <div class="preview-ai-group">
               <label class="setting-label">Alt Text (AI)</label>

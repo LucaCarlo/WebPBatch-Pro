@@ -34,8 +34,8 @@ function createWindow() {
     height: 820,
     minWidth: 960,
     minHeight: 600,
-    title: 'WebPBatch Pro',
-    icon: path.join(__dirname, 'build', 'icon.png'),
+    title: 'PhotoPro',
+    icon: path.join(__dirname, 'src', 'assets', 'favicon-photo-pro.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
