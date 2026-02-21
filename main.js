@@ -360,6 +360,7 @@ ipcMain.handle('open-external', (event, url) => {
 ipcMain.handle('generate-preview', async (event, filePath, settings) => {
   try {
     const sharp = require('sharp');
+    const { applyWatermark } = require('./lib/watermark');
 
     // Read original image info
     const originalMeta = await sharp(filePath, { failOn: 'none' }).metadata();
@@ -389,8 +390,14 @@ ipcMain.handle('generate-preview', async (event, filePath, settings) => {
     // Sharpen
     if (settings.sharpen) pipeline = pipeline.sharpen();
 
-    // Strip metadata
-    if (settings.stripMetadata) pipeline = pipeline.withMetadata(false);
+    // Metadata: Sharp strips metadata by default, keep only if NOT stripping
+    if (settings.stripMetadata === false) {
+      if (settings.privacyMode) {
+        pipeline = pipeline.withMetadata({ orientation: originalMeta.orientation });
+      } else {
+        pipeline = pipeline.withMetadata();
+      }
+    }
 
     // Format
     let convertedBuf;
@@ -407,6 +414,19 @@ ipcMain.handle('generate-preview', async (event, filePath, settings) => {
       convertedBuf = await pipeline.avif({ quality, lossless: !!settings.lossless }).toBuffer();
     } else {
       convertedBuf = await pipeline.webp({ quality }).toBuffer();
+    }
+
+    // Apply watermark if configured
+    if (settings.watermark) {
+      try {
+        const convertedMeta2 = await sharp(convertedBuf).metadata();
+        convertedBuf = await applyWatermark(convertedBuf, {
+          width: convertedMeta2.width,
+          height: convertedMeta2.height
+        }, settings.watermark);
+      } catch (wmErr) {
+        if (logger) logger.error('Preview watermark failed (skipping)', wmErr);
+      }
     }
 
     // Get converted image metadata

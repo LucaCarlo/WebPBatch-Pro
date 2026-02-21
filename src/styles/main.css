@@ -112,8 +112,15 @@ p {
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   -webkit-app-region: no-drag;
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
 }
 
 /* ══════════ MAIN LAYOUT ══════════ */
@@ -331,6 +338,42 @@ p {
   color: var(--text-muted);
   cursor: help;
   font-weight: 700;
+}
+
+/* Section headers for grouping */
+.settings-section-header {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  padding: 6px 0 8px;
+  margin-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+
+/* Watermark advanced details */
+.watermark-advanced-details {
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.watermark-advanced-details summary {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 0;
+  user-select: none;
+}
+
+.watermark-advanced-details summary:hover {
+  color: var(--text);
+}
+
+.watermark-advanced-details[open] summary {
+  margin-bottom: 4px;
 }
 
 /* ══════════ MODAL ══════════ */
@@ -957,24 +1000,88 @@ button:focus-visible {
   font-size: 12px;
 }
 
-/* ══════════ PREVIEW TOOLS ══════════ */
-.preview-tools-section {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+/* ══════════ PREVIEW TABS ══════════ */
+.preview-tabs {
+  display: flex;
+  gap: 2px;
+  margin-left: 16px;
 }
 
-.preview-tool-group {
-  padding: 10px;
+.preview-tab {
+  padding: 6px 14px;
+  border: none;
+  background: none;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: all 0.15s;
+}
+
+.preview-tab:hover {
+  color: var(--text);
+  background: var(--bg-hover);
+}
+
+.preview-tab.active {
+  color: var(--accent);
+  background: var(--accent-bg);
+  font-weight: 600;
+}
+
+.preview-tab-content {
+  display: none;
+}
+
+.preview-tab-content.active {
+  display: block;
+}
+
+/* Safe Area Bar (inline below compare) */
+.preview-safe-area-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 6px 10px;
   background: var(--bg);
   border-radius: var(--radius-sm);
 }
 
-.preview-tool-group .setting-label {
-  margin-bottom: 6px;
+/* ══════════ TOOLS GRID ══════════ */
+.tools-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tool-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.tool-card-header {
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.tool-card-body {
+  padding: 12px;
+}
+
+.tool-card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .preview-tool-row {
@@ -984,16 +1091,11 @@ button:focus-visible {
 }
 
 /* Boost Sliders */
-.boost-sliders {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
 .boost-slider-row {
   display: flex;
   align-items: center;
   gap: 6px;
+  margin-bottom: 6px;
 }
 
 .boost-slider-row label {
@@ -1030,7 +1132,7 @@ button:focus-visible {
 /* AI Compression Info */
 .ai-compression-info {
   padding: 8px;
-  background: var(--bg-card);
+  background: var(--bg);
   border-radius: var(--radius-sm);
   font-size: 12px;
   line-height: 1.6;

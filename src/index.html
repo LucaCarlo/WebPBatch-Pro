@@ -17,10 +17,7 @@
       <span class="topbar-version" id="appVersion"></span>
     </div>
     <div class="topbar-right">
-      <button class="btn btn-ghost btn-sm" id="btnThemeToggle" title="Tema chiaro/scuro">
-        <svg class="icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.5 8.5a5.5 5.5 0 0 1-7-7A5.5 5.5 0 1 0 13.5 8.5z"/></svg>
-        <svg class="icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none"><circle cx="8" cy="8" r="3"/><path d="M8 1v2m0 10v2M1 8h2m10 0h2M3.17 3.17l1.42 1.42m6.82 6.82 1.42 1.42M12.83 3.17l-1.42 1.42M4.59 11.41l-1.42 1.42"/></svg>
-      </button>
+      <!-- Tool buttons -->
       <button class="btn btn-ghost btn-sm" id="btnMultiExport" title="Multi-Platform Export">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="6" height="5" rx="1"/><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="5" y="9" width="6" height="5" rx="1"/></svg>
         <span>Multi Export</span>
@@ -33,13 +30,17 @@
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>
         <span>Watch</span>
       </button>
+      <span class="topbar-divider"></span>
+      <!-- System buttons -->
       <button class="btn btn-ghost btn-sm" id="btnSettings" title="Mostra/nascondi impostazioni">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H2M14 8H6M14 14H10"/><circle cx="4" cy="8" r="1.5"/><circle cx="8" cy="14" r="1.5"/><circle cx="12" cy="2" r="1.5" fill="currentColor"/></svg>
-        <span>Opzioni</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" id="btnThemeToggle" title="Tema chiaro/scuro">
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.5 8.5a5.5 5.5 0 0 1-7-7A5.5 5.5 0 1 0 13.5 8.5z"/></svg>
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none"><circle cx="8" cy="8" r="3"/><path d="M8 1v2m0 10v2M1 8h2m10 0h2M3.17 3.17l1.42 1.42m6.82 6.82 1.42 1.42M12.83 3.17l-1.42 1.42M4.59 11.41l-1.42 1.42"/></svg>
       </button>
       <button class="btn btn-ghost btn-sm" id="btnAbout" title="Informazioni">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 7v5M8 4.5v.5"/></svg>
-        <span>Info</span>
       </button>
     </div>
   </header>
@@ -115,6 +116,7 @@
       <!-- AI Assistant -->
       <div class="setting-group ai-section">
         <label class="setting-label">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v2m0 10v2M1 8h2m10 0h2"/><circle cx="8" cy="8" r="3"/></svg>
           Assistente AI
         </label>
         <div class="ai-config">
@@ -131,7 +133,7 @@
           </div>
           <span id="aiStatus" class="ai-status-text"></span>
         </div>
-        <textarea id="aiDescription" class="input ai-textarea" rows="2" placeholder="Es: 'Devo mettere queste foto come prodotti su Shopify' o 'Post Instagram promozionale'"></textarea>
+        <textarea id="aiDescription" class="input ai-textarea" rows="2" placeholder="Es: 'Foto prodotti per Shopify' o 'Post Instagram promozionale'"></textarea>
         <button class="btn btn-accent btn-sm ai-suggest-btn" id="btnAiSuggest">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v2m0 10v2M1 8h2m10 0h2"/><circle cx="8" cy="8" r="3"/></svg>
           Suggerisci Impostazioni
@@ -157,6 +159,9 @@
           </div>
         </div>
       </div>
+
+      <!-- ── SECTION: Conversione ── -->
+      <div class="settings-section-header">Conversione</div>
 
       <!-- Format -->
       <div class="setting-group">
@@ -228,6 +233,14 @@
         </div>
       </div>
 
+      <label class="checkbox-label" style="margin-bottom:16px;">
+        <input type="checkbox" id="chkSharpen">
+        <span>Sharpen dopo resize</span>
+      </label>
+
+      <!-- ── SECTION: Output ── -->
+      <div class="settings-section-header">Output</div>
+
       <!-- Output folder -->
       <div class="setting-group">
         <label class="setting-label">Cartella output</label>
@@ -246,7 +259,7 @@
       <div class="setting-group">
         <label class="setting-label">
           Naming template
-          <span class="setting-hint" title="Variabili: {name} = nome originale, {w} = larghezza, {h} = altezza, {date} = data, {counter} = contatore">?</span>
+          <span class="setting-hint" title="{name} = nome originale, {w} = larghezza, {h} = altezza, {date} = data, {counter} = contatore">?</span>
         </label>
         <input type="text" id="namingTemplate" class="input" value="{name}" placeholder="{name}">
         <div class="naming-vars">
@@ -268,7 +281,10 @@
         </select>
       </div>
 
-      <!-- Advanced: EXIF -->
+      <!-- ── SECTION: Avanzate ── -->
+      <div class="settings-section-header">Avanzate</div>
+
+      <!-- Metadata / EXIF -->
       <div class="setting-group">
         <label class="setting-label">Metadata / EXIF</label>
         <label class="checkbox-label">
@@ -285,20 +301,12 @@
         </label>
       </div>
 
-      <!-- Advanced: Sharpen -->
-      <div class="setting-group">
-        <label class="checkbox-label">
-          <input type="checkbox" id="chkSharpen">
-          <span>Sharpen dopo resize</span>
-        </label>
-      </div>
-
       <!-- Smart Mode -->
       <div class="setting-group">
         <label class="setting-label">Smart Mode</label>
         <label class="checkbox-label">
           <input type="checkbox" id="chkSmartMode">
-          <span>Abilita ottimizzazione smart</span>
+          <span>Ottimizzazione automatica</span>
         </label>
         <div id="smartOptions" style="display:none;">
           <div class="smart-option">
@@ -324,15 +332,16 @@
         </select>
       </div>
 
-      <!-- Watermark -->
+      <!-- ── SECTION: Watermark ── -->
+      <div class="settings-section-header">Watermark</div>
+
       <div class="setting-group">
-        <label class="setting-label">Watermark</label>
         <label class="checkbox-label">
           <input type="checkbox" id="chkWatermark">
           <span>Abilita watermark</span>
         </label>
         <div id="watermarkOptions" style="display:none;">
-          <div class="radio-group">
+          <div class="radio-group" style="margin-top:8px;">
             <label class="radio-label"><input type="radio" name="watermarkType" value="text" checked> Testo</label>
             <label class="radio-label"><input type="radio" name="watermarkType" value="image"> Immagine</label>
           </div>
@@ -381,39 +390,39 @@
             <input type="number" id="watermarkMargin" class="input input-sm" value="20" min="0">
           </div>
           <!-- Advanced Watermark Options -->
-          <div class="watermark-advanced-divider" style="margin-top:12px;padding-top:8px;border-top:1px solid var(--border);">
-            <label class="setting-label" style="font-size:11px;margin-bottom:6px;">Opzioni Avanzate</label>
-          </div>
-          <div class="watermark-row">
-            <label>Dimensione</label>
-            <select id="watermarkSizeMode" class="select select-sm">
-              <option value="fixed">Fissa (px)</option>
-              <option value="adaptive">Adattiva (%)</option>
-            </select>
-          </div>
-          <div class="watermark-row" id="watermarkAdaptiveRow" style="display:none;">
-            <label>% larghezza</label>
-            <input type="number" id="watermarkAdaptivePercent" class="input input-sm" value="4" min="1" max="20">
-          </div>
-          <div class="watermark-row">
-            <label>Modalita</label>
-            <select id="watermarkPositionMode" class="select select-sm">
-              <option value="fixed">Posizione fissa</option>
-              <option value="random">Random (anti-scraping)</option>
-              <option value="pattern">Pattern (ripetuto)</option>
-              <option value="subtle">Subtle (invisibile)</option>
-            </select>
-          </div>
-          <div id="watermarkPatternOpts" style="display:none;">
+          <details class="watermark-advanced-details">
+            <summary>Opzioni avanzate</summary>
             <div class="watermark-row">
-              <label>Gap (px)</label>
-              <input type="number" id="watermarkPatternGap" class="input input-sm" value="100" min="20">
+              <label>Dimensione</label>
+              <select id="watermarkSizeMode" class="select select-sm">
+                <option value="fixed">Fissa (px)</option>
+                <option value="adaptive">Adattiva (%)</option>
+              </select>
+            </div>
+            <div class="watermark-row" id="watermarkAdaptiveRow" style="display:none;">
+              <label>% larghezza</label>
+              <input type="number" id="watermarkAdaptivePercent" class="input input-sm" value="4" min="1" max="20">
             </div>
             <div class="watermark-row">
-              <label>Rotazione</label>
-              <input type="number" id="watermarkPatternRotation" class="input input-sm" value="-30" min="-90" max="90">
+              <label>Modalita</label>
+              <select id="watermarkPositionMode" class="select select-sm">
+                <option value="fixed">Posizione fissa</option>
+                <option value="random">Random (anti-scraping)</option>
+                <option value="pattern">Pattern (ripetuto)</option>
+                <option value="subtle">Subtle (invisibile)</option>
+              </select>
             </div>
-          </div>
+            <div id="watermarkPatternOpts" style="display:none;">
+              <div class="watermark-row">
+                <label>Gap (px)</label>
+                <input type="number" id="watermarkPatternGap" class="input input-sm" value="100" min="20">
+              </div>
+              <div class="watermark-row">
+                <label>Rotazione</label>
+                <input type="number" id="watermarkPatternRotation" class="input input-sm" value="-30" min="-90" max="90">
+              </div>
+            </div>
+          </details>
         </div>
       </div>
     </aside>
@@ -515,6 +524,11 @@
     <div class="modal modal-xl">
       <div class="modal-header">
         <h3>Preview Confronto</h3>
+        <div class="preview-tabs">
+          <button class="preview-tab active" data-tab="compare">Confronto</button>
+          <button class="preview-tab" data-tab="tools">Strumenti</button>
+          <button class="preview-tab" data-tab="ai">AI SEO</button>
+        </div>
         <button class="modal-close" id="closePreviewModal">&times;</button>
       </div>
       <div class="modal-body preview-body">
@@ -522,32 +536,31 @@
           <div class="spinner"></div>
           <p>Generando preview...</p>
         </div>
-        <div id="previewCompare" class="preview-compare" style="display:none;">
-          <div class="preview-images">
-            <img id="previewOriginal" class="preview-img preview-img-left" alt="Originale">
-            <img id="previewConverted" class="preview-img preview-img-right" alt="Convertita">
-            <div id="previewSlider" class="preview-slider">
-              <div class="preview-slider-line"></div>
-              <div class="preview-slider-handle">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4 8l3-4v8zm8 0l-3-4v8z"/></svg>
+
+        <!-- TAB: Confronto -->
+        <div class="preview-tab-content active" data-tab-content="compare">
+          <div id="previewCompare" class="preview-compare" style="display:none;">
+            <div class="preview-images">
+              <img id="previewOriginal" class="preview-img preview-img-left" alt="Originale">
+              <img id="previewConverted" class="preview-img preview-img-right" alt="Convertita">
+              <div id="previewSlider" class="preview-slider">
+                <div class="preview-slider-line"></div>
+                <div class="preview-slider-handle">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4 8l3-4v8zm8 0l-3-4v8z"/></svg>
+                </div>
               </div>
+              <div class="preview-label preview-label-left">Originale</div>
+              <div class="preview-label preview-label-right">Convertita</div>
             </div>
-            <div class="preview-label preview-label-left">Originale</div>
-            <div class="preview-label preview-label-right">Convertita</div>
-          </div>
-          <div class="preview-info">
-            <div id="previewInfoOriginal" class="preview-info-box"></div>
-            <div id="previewInfoSavings" class="preview-info-savings"></div>
-            <div id="previewInfoConverted" class="preview-info-box"></div>
-          </div>
-        </div>
-        <!-- ── Tools Section ── -->
-        <div class="preview-tools-section">
-          <!-- Safe Area Overlay -->
-          <div class="preview-tool-group">
-            <label class="setting-label">Safe Area Overlay</label>
-            <div class="preview-tool-row">
-              <select id="safeAreaPlatform" class="select select-sm" style="flex:1;">
+            <div class="preview-info">
+              <div id="previewInfoOriginal" class="preview-info-box"></div>
+              <div id="previewInfoSavings" class="preview-info-savings"></div>
+              <div id="previewInfoConverted" class="preview-info-box"></div>
+            </div>
+            <!-- Safe Area Overlay (inline with compare) -->
+            <div class="preview-safe-area-bar">
+              <label style="font-size:11px;color:var(--text-muted);">Safe Area:</label>
+              <select id="safeAreaPlatform" class="select select-sm" style="width:auto;min-width:100px;">
                 <option value="">Nessuno</option>
                 <option value="tiktok">TikTok</option>
                 <option value="instagram">Instagram</option>
@@ -556,122 +569,135 @@
               </select>
             </div>
           </div>
+        </div>
 
-          <!-- Smart Crop -->
-          <div class="preview-tool-group">
-            <label class="setting-label">AI Smart Crop</label>
-            <div class="preview-tool-row">
-              <select id="smartCropPlatform" class="select select-sm" style="flex:1;">
-                <option value="instagram-post">Instagram Post (4:5)</option>
-                <option value="instagram-story">Instagram Story (9:16)</option>
-                <option value="tiktok">TikTok (9:16)</option>
-                <option value="youtube-thumb">YouTube Thumb (16:9)</option>
-                <option value="pinterest">Pinterest (2:3)</option>
-                <option value="facebook-post">Facebook (1:1)</option>
-              </select>
-              <button class="btn btn-accent btn-xs" id="btnSmartCrop">Crop AI</button>
+        <!-- TAB: Strumenti -->
+        <div class="preview-tab-content" data-tab-content="tools">
+          <div class="tools-grid">
+            <!-- YouTube Thumbnail Boost -->
+            <div class="tool-card">
+              <div class="tool-card-header">YouTube Thumbnail Boost</div>
+              <div class="tool-card-body">
+                <div class="boost-slider-row">
+                  <label>Luminosita</label>
+                  <input type="range" id="boostBrightness" class="slider slider-sm" min="80" max="140" value="110">
+                  <span id="boostBrightnessVal">110</span>
+                </div>
+                <div class="boost-slider-row">
+                  <label>Saturazione</label>
+                  <input type="range" id="boostSaturation" class="slider slider-sm" min="80" max="160" value="120">
+                  <span id="boostSaturationVal">120</span>
+                </div>
+                <div class="boost-slider-row">
+                  <label>Nitidezza</label>
+                  <input type="range" id="boostSharpen" class="slider slider-sm" min="0" max="30" value="10">
+                  <span id="boostSharpenVal">10</span>
+                </div>
+                <div class="tool-card-actions">
+                  <button class="btn btn-accent btn-xs" id="btnBoostPreview">Anteprima</button>
+                  <button class="btn btn-outline btn-xs" id="btnBoostSave">Salva 1280x720</button>
+                </div>
+              </div>
             </div>
-            <div id="smartCropResult" style="display:none;">
-              <div id="smartCropPreview" class="smart-crop-preview"></div>
-              <button class="btn btn-outline btn-xs" id="btnSmartCropSave" style="margin-top:6px;">Salva Crop</button>
-            </div>
-          </div>
 
-          <!-- YouTube Thumbnail Boost -->
-          <div class="preview-tool-group">
-            <label class="setting-label">YouTube Thumbnail Boost</label>
-            <div class="boost-sliders">
-              <div class="boost-slider-row">
-                <label>Luminosita</label>
-                <input type="range" id="boostBrightness" class="slider slider-sm" min="80" max="140" value="110">
-                <span id="boostBrightnessVal">110</span>
-              </div>
-              <div class="boost-slider-row">
-                <label>Saturazione</label>
-                <input type="range" id="boostSaturation" class="slider slider-sm" min="80" max="160" value="120">
-                <span id="boostSaturationVal">120</span>
-              </div>
-              <div class="boost-slider-row">
-                <label>Nitidezza</label>
-                <input type="range" id="boostSharpen" class="slider slider-sm" min="0" max="30" value="10">
-                <span id="boostSharpenVal">10</span>
+            <!-- AI Smart Crop -->
+            <div class="tool-card">
+              <div class="tool-card-header">AI Smart Crop</div>
+              <div class="tool-card-body">
+                <div class="preview-tool-row">
+                  <select id="smartCropPlatform" class="select select-sm" style="flex:1;">
+                    <option value="instagram-post">Instagram Post (4:5)</option>
+                    <option value="instagram-story">Instagram Story (9:16)</option>
+                    <option value="tiktok">TikTok (9:16)</option>
+                    <option value="youtube-thumb">YouTube Thumb (16:9)</option>
+                    <option value="pinterest">Pinterest (2:3)</option>
+                    <option value="facebook-post">Facebook (1:1)</option>
+                  </select>
+                </div>
+                <div class="tool-card-actions">
+                  <button class="btn btn-accent btn-xs" id="btnSmartCrop">Rileva e Crop</button>
+                  <button class="btn btn-outline btn-xs" id="btnSmartCropSave" style="display:none;">Salva</button>
+                </div>
+                <div id="smartCropResult" style="display:none;">
+                  <div id="smartCropPreview" class="smart-crop-preview"></div>
+                </div>
               </div>
             </div>
-            <div class="preview-tool-row" style="margin-top:6px;">
-              <button class="btn btn-accent btn-xs" id="btnBoostPreview">Anteprima</button>
-              <button class="btn btn-outline btn-xs" id="btnBoostSave">Salva 1280x720</button>
-            </div>
-          </div>
 
-          <!-- Background Replace -->
-          <div class="preview-tool-group">
-            <label class="setting-label">Background</label>
-            <div class="preview-tool-row">
-              <select id="bgReplaceMode" class="select select-sm" style="flex:1;">
-                <option value="">Nessuno</option>
-                <option value="color-remove">Rimuovi colore</option>
-                <option value="ai-blur">AI Background Blur</option>
-                <option value="solid">Colore solido</option>
-              </select>
-            </div>
-            <div id="bgReplaceColorOpts" style="display:none;margin-top:6px;">
-              <div class="preview-tool-row">
-                <label style="font-size:11px;min-width:60px;">Colore</label>
-                <input type="color" id="bgTargetColor" value="#ffffff">
-                <label style="font-size:11px;min-width:60px;">Tolleranza</label>
-                <input type="range" id="bgTolerance" class="slider slider-sm" min="5" max="80" value="30" style="flex:1;">
-                <span id="bgToleranceVal" style="font-size:11px;">30</span>
-              </div>
-              <div class="preview-tool-row" style="margin-top:4px;">
-                <label style="font-size:11px;min-width:60px;">Sostituz.</label>
-                <select id="bgReplacement" class="select select-sm" style="flex:1;">
-                  <option value="transparent">Trasparente</option>
-                  <option value="blur">Sfocatura</option>
-                  <option value="color">Colore</option>
+            <!-- Background Replace -->
+            <div class="tool-card">
+              <div class="tool-card-header">Background</div>
+              <div class="tool-card-body">
+                <select id="bgReplaceMode" class="select select-sm">
+                  <option value="">Nessuna modifica</option>
+                  <option value="color-remove">Rimuovi per colore</option>
+                  <option value="ai-blur">AI Background Blur</option>
                 </select>
-                <input type="color" id="bgReplacementColor" value="#000000" style="display:none;">
+                <div id="bgReplaceColorOpts" style="display:none;margin-top:8px;">
+                  <div class="preview-tool-row">
+                    <label style="font-size:11px;">Colore</label>
+                    <input type="color" id="bgTargetColor" value="#ffffff">
+                    <label style="font-size:11px;">Tolleranza</label>
+                    <input type="range" id="bgTolerance" class="slider slider-sm" min="5" max="80" value="30" style="flex:1;">
+                    <span id="bgToleranceVal" style="font-size:11px;">30</span>
+                  </div>
+                  <div class="preview-tool-row" style="margin-top:4px;">
+                    <label style="font-size:11px;">Sostituzione</label>
+                    <select id="bgReplacement" class="select select-sm" style="flex:1;">
+                      <option value="transparent">Trasparente</option>
+                      <option value="blur">Sfocatura</option>
+                      <option value="color">Colore</option>
+                    </select>
+                    <input type="color" id="bgReplacementColor" value="#000000" style="display:none;">
+                  </div>
+                </div>
+                <div class="tool-card-actions">
+                  <button class="btn btn-accent btn-xs" id="btnBgReplace">Applica</button>
+                  <button class="btn btn-outline btn-xs" id="btnBgReplaceSave" style="display:none;">Salva</button>
+                </div>
               </div>
             </div>
-            <div class="preview-tool-row" style="margin-top:6px;">
-              <button class="btn btn-accent btn-xs" id="btnBgReplace">Applica</button>
-              <button class="btn btn-outline btn-xs" id="btnBgReplaceSave" style="display:none;">Salva</button>
-            </div>
-          </div>
 
-          <!-- AI Compression Analysis -->
-          <div class="preview-tool-group">
-            <label class="setting-label">AI Compression Analysis</label>
-            <button class="btn btn-accent btn-xs" id="btnAiCompression" style="width:100%;">Analizza Immagine</button>
-            <div id="aiCompressionResult" style="display:none;margin-top:8px;">
-              <div id="aiCompressionInfo" class="ai-compression-info"></div>
-              <button class="btn btn-outline btn-xs" id="btnApplyAiCompression" style="margin-top:6px;">Applica Suggerimenti</button>
+            <!-- AI Compression Analysis -->
+            <div class="tool-card">
+              <div class="tool-card-header">AI Compression Analysis</div>
+              <div class="tool-card-body">
+                <p style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Analizza il tipo di immagine e suggerisce formato/qualita ottimali.</p>
+                <button class="btn btn-accent btn-xs" id="btnAiCompression" style="width:100%;">Analizza Immagine</button>
+                <div id="aiCompressionResult" style="display:none;margin-top:8px;">
+                  <div id="aiCompressionInfo" class="ai-compression-info"></div>
+                  <button class="btn btn-outline btn-xs" id="btnApplyAiCompression" style="margin-top:6px;">Applica Suggerimenti</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- AI-powered sections -->
-        <div class="preview-ai-section">
-          <div class="preview-ai-group">
-            <label class="setting-label">Alt Text (AI)</label>
-            <div class="preview-ai-row">
-              <textarea id="previewAltText" class="input" rows="2" placeholder="Clicca 'Genera' per creare alt text SEO..." readonly></textarea>
-              <div class="preview-ai-buttons">
-                <button class="btn btn-accent btn-xs" id="btnGenerateAltText">Genera Alt Text</button>
-                <button class="btn btn-ghost btn-xs" id="btnCopyAltText" title="Copia">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M5 11H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v2"/></svg>
-                </button>
+        <!-- TAB: AI SEO -->
+        <div class="preview-tab-content" data-tab-content="ai">
+          <div class="preview-ai-section">
+            <div class="preview-ai-group">
+              <label class="setting-label">Alt Text (AI)</label>
+              <div class="preview-ai-row">
+                <textarea id="previewAltText" class="input" rows="2" placeholder="Clicca 'Genera' per creare alt text SEO..." readonly></textarea>
+                <div class="preview-ai-buttons">
+                  <button class="btn btn-accent btn-xs" id="btnGenerateAltText">Genera Alt Text</button>
+                  <button class="btn btn-ghost btn-xs" id="btnCopyAltText" title="Copia">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M5 11H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v2"/></svg>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="preview-ai-group">
-            <label class="setting-label">Metadata SEO (AI)</label>
-            <div class="preview-ai-row">
-              <textarea id="previewMetadata" class="input" rows="4" placeholder="Clicca 'Genera' per creare metadata SEO (title, description, keywords)..." readonly></textarea>
-              <div class="preview-ai-buttons">
-                <button class="btn btn-accent btn-xs" id="btnGenerateMetadata">Genera Metadata SEO</button>
-                <button class="btn btn-ghost btn-xs" id="btnCopyMetadata" title="Copia">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M5 11H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v2"/></svg>
-                </button>
+            <div class="preview-ai-group">
+              <label class="setting-label">Metadata SEO (AI)</label>
+              <div class="preview-ai-row">
+                <textarea id="previewMetadata" class="input" rows="4" placeholder="Clicca 'Genera' per creare metadata SEO (title, description, keywords)..." readonly></textarea>
+                <div class="preview-ai-buttons">
+                  <button class="btn btn-accent btn-xs" id="btnGenerateMetadata">Genera Metadata SEO</button>
+                  <button class="btn btn-ghost btn-xs" id="btnCopyMetadata" title="Copia">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M5 11H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v2"/></svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

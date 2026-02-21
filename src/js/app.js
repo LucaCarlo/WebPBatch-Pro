@@ -259,6 +259,20 @@
    * Preview modal tools (Boost, BG Replace, AI Compression, Safe Area, Smart Crop)
    */
   function initPreviewTools() {
+    // --- Preview tab switching ---
+    document.querySelectorAll('.preview-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-tab');
+        // Deactivate all tabs and contents
+        document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.preview-tab-content').forEach(c => c.classList.remove('active'));
+        // Activate clicked tab and matching content
+        tab.classList.add('active');
+        const content = document.querySelector(`.preview-tab-content[data-tab-content="${target}"]`);
+        if (content) content.classList.add('active');
+      });
+    });
+
     // --- Boost sliders live value display ---
     const boostBrightness = document.getElementById('boostBrightness');
     const boostSaturation = document.getElementById('boostSaturation');
